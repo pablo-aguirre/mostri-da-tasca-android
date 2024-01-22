@@ -1,4 +1,4 @@
-package com.example.mostridatasca.ui.objects
+package com.example.mostridatasca.ui.leaderboard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -8,7 +8,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,13 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
-import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 @Composable
-fun ObjectListItem(
+fun UserListItem(
     image: String = stringResource(id = R.string.default_image),
     name: String,
-    near: Boolean,
+    xp: String,
     onButtonClick: () -> Unit
 ) {
     ListItem(
@@ -39,11 +37,7 @@ fun ObjectListItem(
             )
         },
         headlineContent = { Text(name) },
-        supportingContent = {
-            if (near) {
-                SuggestionChip(onClick = { /*TODO*/ }, label = { Text("Can be activated") })
-            }
-        },
+        supportingContent = { Text("$xp XP") },
         trailingContent = {
             IconButton(onClick = onButtonClick) {
                 Icon(Icons.Outlined.Info, contentDescription = null)
@@ -55,19 +49,16 @@ fun ObjectListItem(
 @Preview
 @Composable
 fun MyPreview() {
-    MostriDaTascaTheme {
-        Column {
-            ObjectListItem(
-                name = "Monster1",
-                near = false,
-                onButtonClick = { TODO() }
-            )
-            ObjectListItem(
-                name = "Monster2",
-                near = true,
-                onButtonClick = { TODO() }
-            )
-        }
+    Column {
+        UserListItem(
+            name = "Pablo",
+            xp = "2208",
+            onButtonClick = { TODO() }
+        )
+        UserListItem(
+            name = "Pablo",
+            xp = "2208",
+            onButtonClick = { TODO() }
+        )
     }
 }
-
