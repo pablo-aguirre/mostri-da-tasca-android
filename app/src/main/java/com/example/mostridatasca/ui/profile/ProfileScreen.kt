@@ -1,19 +1,23 @@
 package com.example.mostridatasca.ui.profile
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -98,12 +102,44 @@ fun UserInformation(
     }
 }
 
+@Composable
+fun SingleArtifact(
+    name: String,
+    image: String = stringResource(id = R.string.default_image),
+    type: String,
+    level: String
+) {
+    ElevatedCard {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp)
+        )
+        ImageFromBase64(
+            image = image,
+            modifier = Modifier
+                .size(180.dp)
+                .clip(CircleShape)
+                .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.Crop
+        )
+        ListItem(
+            leadingContent = { Icon(Icons.Default.Info, contentDescription = null) },
+            headlineContent = { Text("Type") },
+            trailingContent = { SuggestionChip(onClick = { /*TODO*/ }, label = { Text(type) }) }
+        )
+        ListItem(
+            leadingContent = { Icon(Icons.Default.Star, contentDescription = null) },
+            headlineContent = { Text("Level") },
+            trailingContent = { SuggestionChip(onClick = { /*TODO*/ }, label = { Text(level) }) }
+        )
+    }
+}
+
 @Preview
 @Composable
 fun MyPreview() {
-    UserInformation(
-        name = "Pablo",
-        lifePoints = "100",
-        experience = "50"
-    )
+
 }
