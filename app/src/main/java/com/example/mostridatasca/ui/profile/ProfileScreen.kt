@@ -1,11 +1,12 @@
 package com.example.mostridatasca.ui.profile
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
@@ -18,10 +19,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,14 +33,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
+import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 @Composable
-fun UserImage(
+fun ProfileScreen() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ProfileImage("name")
+        UserInformation1(
+            name = "name", positionShare = false
+        )
+        Divider()
+        UserInformation2(lifePoints = "100", experience = "100")
+        Divider()
+    }
+}
+
+@Composable
+fun ProfileImage(
+    name: String,
     image: String = stringResource(id = R.string.default_image)
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.padding(10.dp)
+        )
         ImageFromBase64(
             image = image,
             contentScale = ContentScale.Crop,
@@ -54,51 +78,50 @@ fun UserImage(
 }
 
 @Composable
-fun UserInformation(
+fun UserInformation1(
     name: String,
-    lifePoints: String,
-    experience: String
+    positionShare: Boolean
 ) {
     Column {
         ListItem(
             leadingContent = { Icon(Icons.Default.Face, contentDescription = null) },
             headlineContent = {
-                TextField(
+                OutlinedTextField(
                     value = name,
-                    onValueChange = { TODO() }
+                    label = { Text("Edit name") },
+                    onValueChange = { }
                 )
             },
             trailingContent = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.Edit, contentDescription = null)
+                IconButton(onClick = { /*TODO*/ }, enabled = true) {
+                    Icon(Icons.Default.Done, contentDescription = null)
                 }
             }
         )
         ListItem(
             leadingContent = { Icon(Icons.Default.Place, contentDescription = null) },
             headlineContent = { Text("Position share") },
-            trailingContent = { Switch(checked = true, onCheckedChange = { TODO() }) }
+            trailingContent = { Switch(checked = positionShare, onCheckedChange = { TODO() }) }
         )
-        Divider()
+    }
+}
+
+@Composable
+fun UserInformation2(
+    lifePoints: String,
+    experience: String
+) {
+    Column {
         ListItem(
             leadingContent = { Icon(Icons.Default.Favorite, contentDescription = null) },
             headlineContent = { Text("Life points") },
-            trailingContent = {
-                SuggestionChip(
-                    onClick = { /*TODO*/ },
-                    label = { Text(lifePoints) })
-            }
+            trailingContent = { Text(experience, style = MaterialTheme.typography.bodyLarge) }
         )
         ListItem(
             leadingContent = { Icon(Icons.Default.Star, contentDescription = null) },
             headlineContent = { Text("Experience") },
-            trailingContent = {
-                SuggestionChip(
-                    onClick = { /*TODO*/ },
-                    label = { Text(experience) })
-            }
+            trailingContent = { Text(experience, style = MaterialTheme.typography.bodyLarge) }
         )
-        Divider()
     }
 }
 
@@ -138,8 +161,10 @@ fun SingleArtifact(
     }
 }
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
 fun MyPreview() {
-
+    MostriDaTascaTheme {
+        ProfileScreen()
+    }
 }
