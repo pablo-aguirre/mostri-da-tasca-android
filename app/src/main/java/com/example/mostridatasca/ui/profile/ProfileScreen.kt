@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -91,19 +92,25 @@ fun ProfileImage(
         onResult = { updatePicture(it) }
     )
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Box {
         ImageFromBase64(
             image = image,
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(180.dp)
                 .clip(CircleShape)
+                .align(Alignment.Center),
+            contentScale = ContentScale.Crop
         )
-        IconButton(onClick = { launcher.launch("image/*") }) {
+        IconButton(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .align(Alignment.BottomEnd)
+        ) {
             Icon(Icons.Outlined.Edit, contentDescription = null)
         }
+
     }
 }
 
@@ -196,12 +203,5 @@ fun SingleArtifact(
             headlineContent = { Text("Level") },
             trailingContent = { SuggestionChip(onClick = { /*TODO*/ }, label = { Text(level) }) }
         )
-    }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun MyPreview() {
-    MostriDaTascaTheme {
     }
 }
