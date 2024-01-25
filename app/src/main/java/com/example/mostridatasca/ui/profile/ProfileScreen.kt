@@ -26,6 +26,8 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,41 +35,48 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
 import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileImage("name")
+        Text(
+            text = uiState.name,
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.padding(10.dp)
+        )
+        ProfileImage(
+            image = uiState.picture ?: stringResource(id = R.string.default_user_image)
+        )
         UserInformation1(
-            name = "name", positionShare = false
+            name = uiState.name, positionShare = uiState.positionShare
         )
         Divider()
-        UserInformation2(lifePoints = "100", experience = "100")
+        UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
         Divider()
     }
 }
 
 @Composable
 fun ProfileImage(
-    name: String,
-    image: String = stringResource(id = R.string.default_image)
+    image: String
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(10.dp)
-        )
         ImageFromBase64(
             image = image,
             contentScale = ContentScale.Crop,
@@ -119,7 +128,7 @@ fun UserInformation2(
         ListItem(
             leadingContent = { Icon(Icons.Default.Favorite, contentDescription = null) },
             headlineContent = { Text("Life points") },
-            trailingContent = { Text(experience, style = MaterialTheme.typography.bodyLarge) }
+            trailingContent = { Text(lifePoints, style = MaterialTheme.typography.bodyLarge) }
         )
         ListItem(
             leadingContent = { Icon(Icons.Default.Star, contentDescription = null) },
@@ -132,7 +141,7 @@ fun UserInformation2(
 @Composable
 fun SingleArtifact(
     name: String,
-    image: String = stringResource(id = R.string.default_image),
+    image: String = stringResource(id = R.string.default_user_image),
     type: String,
     level: String
 ) {
