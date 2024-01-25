@@ -7,4 +7,5 @@ data class ProfileUiState(
     val life: String = "100",
     val experience: String = "0",
     val newName: String = "",
+    val isNewNameValid: Boolean = false
 )

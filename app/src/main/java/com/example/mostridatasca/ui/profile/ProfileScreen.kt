@@ -1,5 +1,9 @@
 package com.example.mostridatasca.ui.profile
 
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,7 +47,8 @@ import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel = viewModel(),
+    context: Context
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -59,10 +64,16 @@ fun ProfileScreen(
             modifier = Modifier.padding(10.dp)
         )
         ProfileImage(
-            image = uiState.picture ?: stringResource(id = R.string.default_user_image)
+            image = uiState.picture ?: stringResource(id = R.string.default_user_image),
+            updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
         )
         UserInformation1(
-            name = uiState.name, positionShare = uiState.positionShare
+            newName = uiState.newName,
+            positionShare = uiState.positionShare,
+            buttonEnabled = uiState.isNewNameValid,
+            setNewName = { viewModel.setNewName(it) },
+            updateName = { viewModel.updateName(it) },
+            updatePositionShare = { viewModel.updatePositionShare(it) }
         )
         Divider()
         UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
@@ -72,8 +83,14 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileImage(
-    image: String
+    image: String,
+    updatePicture: (Uri?) -> Unit
 ) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { updatePicture(it) }
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -84,7 +101,7 @@ fun ProfileImage(
                 .size(180.dp)
                 .clip(CircleShape)
         )
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { launcher.launch("image/*") }) {
             Icon(Icons.Outlined.Edit, contentDescription = null)
         }
     }
@@ -92,21 +109,25 @@ fun ProfileImage(
 
 @Composable
 fun UserInformation1(
-    name: String,
-    positionShare: Boolean
+    newName: String,
+    positionShare: Boolean,
+    buttonEnabled: Boolean,
+    setNewName: (String) -> Unit,
+    updateName: (String) -> Unit,
+    updatePositionShare: (Boolean) -> Unit,
 ) {
     Column {
         ListItem(
             leadingContent = { Icon(Icons.Default.Face, contentDescription = null) },
             headlineContent = {
                 OutlinedTextField(
-                    value = name,
+                    value = newName,
                     label = { Text("Edit name") },
-                    onValueChange = { }
+                    onValueChange = { setNewName(it) }
                 )
             },
             trailingContent = {
-                IconButton(onClick = { /*TODO*/ }, enabled = true) {
+                IconButton(onClick = { updateName(newName) }, enabled = buttonEnabled) {
                     Icon(Icons.Default.Done, contentDescription = null)
                 }
             }
@@ -114,7 +135,11 @@ fun UserInformation1(
         ListItem(
             leadingContent = { Icon(Icons.Default.Place, contentDescription = null) },
             headlineContent = { Text("Position share") },
-            trailingContent = { Switch(checked = positionShare, onCheckedChange = { TODO() }) }
+            trailingContent = {
+                Switch(
+                    checked = positionShare,
+                    onCheckedChange = { updatePositionShare(it) })
+            }
         )
     }
 }
