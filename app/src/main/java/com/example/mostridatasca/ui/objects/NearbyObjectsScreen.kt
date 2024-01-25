@@ -1,5 +1,6 @@
 package com.example.mostridatasca.ui.objects
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,15 @@ import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
 import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
+
+
+@Composable
+fun NearbyObjectsScreen(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.background(MaterialTheme.colorScheme.primary)) {
+        Text("NearbyObjectsScreen")
+    }
+
+}
 
 @Composable
 fun ObjectListItem(

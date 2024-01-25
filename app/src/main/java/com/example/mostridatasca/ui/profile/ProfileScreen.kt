@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Face
@@ -36,9 +38,11 @@ import com.example.mostridatasca.ui.ImageFromBase64
 import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileImage("name")
@@ -165,6 +169,5 @@ fun SingleArtifact(
 @Composable
 fun MyPreview() {
     MostriDaTascaTheme {
-        ProfileScreen()
     }
 }
