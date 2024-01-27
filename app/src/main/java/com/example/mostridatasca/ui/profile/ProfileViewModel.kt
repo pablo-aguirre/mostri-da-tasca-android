@@ -20,19 +20,24 @@ class ProfileViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val user = repository.getUser()
-            _uiState.update {
-                it.copy(
-                    name = user.name, picture = user.picture, positionShare = user.positionshare
-                )
+            try {
+                val user = repository.getUser()
+                _uiState.update {
+                    it.copy(
+                        name = user.name, picture = user.picture, positionShare = user.positionshare
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("ProfileViewModel", "init: ", e)
             }
         }
     }
 
     fun setNewName(newName: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                newName = newName, isNewNameValid = newName.isNotBlank() && newName.length <= 15
+        _uiState.update {
+            it.copy(
+                newName = newName,
+                isNewNameValid = newName.isNotBlank() && newName.length <= 15
             )
         }
     }
