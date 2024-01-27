@@ -2,7 +2,6 @@ package com.example.mostridatasca.ui.profile
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mostridatasca.data.ProfileRepository
@@ -11,6 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.File
+import java.io.IOException
 import java.io.InputStream
 
 class ProfileViewModel : ViewModel() {
@@ -19,6 +21,11 @@ class ProfileViewModel : ViewModel() {
     private val repository = ProfileRepository()
 
     init {
+        getProfile()
+    }
+
+    private fun getProfile() {
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             try {
                 val user = repository.getUser()
@@ -27,10 +34,13 @@ class ProfileViewModel : ViewModel() {
                         name = user.name, picture = user.picture, positionShare = user.positionshare
                     )
                 }
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "init: ", e)
+            } catch (e: HttpException) {
+                _uiState.update { it.copy(error = true) }
+            } catch (e: IOException) {
+                _uiState.update { it.copy(error = true) }
             }
         }
+        _uiState.update { it.copy(loading = false) }
     }
 
     fun setNewName(newName: String) {
@@ -43,6 +53,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun updateName(newName: String) {
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             try {
                 repository.updateUser(
@@ -51,13 +62,17 @@ class ProfileViewModel : ViewModel() {
                     positionShare = uiState.value.positionShare
                 )
                 _uiState.update { it.copy(name = newName, newName = "", isNewNameValid = false) }
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "updateName: ", e)
+            } catch (e: HttpException) {
+                _uiState.update { it.copy(error = true) }
+            } catch (e: IOException) {
+                _uiState.update { it.copy(error = true) }
             }
         }
+        _uiState.update { it.copy(loading = false) }
     }
 
     fun updatePositionShare(newValue: Boolean) {
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             try {
                 repository.updateUser(
@@ -66,18 +81,29 @@ class ProfileViewModel : ViewModel() {
                     positionShare = newValue
                 )
                 _uiState.update { it.copy(positionShare = newValue) }
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "updatePositionShare: ", e)
+            } catch (e: HttpException) {
+                _uiState.update { it.copy(error = true) }
+            } catch (e: IOException) {
+                _uiState.update { it.copy(error = true) }
             }
         }
+        _uiState.update { it.copy(loading = false) }
     }
 
     fun updatePicture(contentResolver: ContentResolver, pictureUri: Uri?) {
+        File(pictureUri?.path ?: return).length().let {
+            if (it > 100000) {
+                _uiState.update { it.copy(error = true) }
+                return
+            }
+        }
         val inputStream: InputStream? = contentResolver.openInputStream(pictureUri ?: return)
         val imageBytes = inputStream?.readBytes()
 
         val imageString =
             imageBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.DEFAULT) }
+
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             try {
                 repository.updateUser(
@@ -86,11 +112,14 @@ class ProfileViewModel : ViewModel() {
                     positionShare = uiState.value.positionShare
                 )
                 _uiState.update { it.copy(picture = imageString) }
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "updatePicture: ", e)
+            } catch (e: HttpException) {
+                _uiState.update { it.copy(error = true) }
+            } catch (e: IOException) {
+                _uiState.update { it.copy(error = true) }
             }
         }
         inputStream?.close();
+        _uiState.update { it.copy(loading = false) }
     }
 
 }

@@ -51,32 +51,37 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = uiState.name,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(10.dp)
-        )
-        ProfileImage(
-            image = uiState.picture ?: stringResource(id = R.string.default_user_image),
-            updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
-        )
-        UserInformation1(
-            newName = uiState.newName,
-            positionShare = uiState.positionShare,
-            buttonEnabled = uiState.isNewNameValid,
-            setNewName = { viewModel.setNewName(it) },
-            updateName = { viewModel.updateName(it) },
-            updatePositionShare = { viewModel.updatePositionShare(it) }
-        )
-        Divider()
-        UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
-        Divider()
+    when {
+        uiState.error -> Text(text = "Error", modifier = modifier)
+        uiState.loading -> Text(text = "Loading", modifier = modifier)
+        else ->
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.name,
+                    style = MaterialTheme.typography.displaySmall,
+                    modifier = Modifier.padding(10.dp)
+                )
+                ProfileImage(
+                    image = uiState.picture ?: stringResource(id = R.string.default_user_image),
+                    updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
+                )
+                UserInformation1(
+                    newName = uiState.newName,
+                    positionShare = uiState.positionShare,
+                    buttonEnabled = uiState.isNewNameValid,
+                    setNewName = { viewModel.setNewName(it) },
+                    updateName = { viewModel.updateName(it) },
+                    updatePositionShare = { viewModel.updatePositionShare(it) }
+                )
+                Divider()
+                UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
+                Divider()
+            }
     }
 }
 
@@ -199,7 +204,11 @@ fun SingleArtifact(
         ListItem(
             leadingContent = { Icon(Icons.Default.Star, contentDescription = null) },
             headlineContent = { Text("Level") },
-            trailingContent = { SuggestionChip(onClick = { /*TODO*/ }, label = { Text(level) }) }
+            trailingContent = {
+                SuggestionChip(
+                    onClick = { /*TODO*/ },
+                    label = { Text(level) })
+            }
         )
     }
 }
