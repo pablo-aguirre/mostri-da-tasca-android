@@ -34,7 +34,7 @@ fun NearbyObjectsScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun ObjectListItem(
-    image: String = stringResource(id = R.string.default_image),
+    image: String = stringResource(id = R.string.default_user_image),
     name: String,
     near: Boolean,
     onButtonClick: () -> Unit

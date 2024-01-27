@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -63,7 +64,8 @@ fun MostriDaTasca(
                 LeaderBoardScreen(modifier = Modifier.padding(innerPadding))
             }
             composable(route = Screens.ProfileScreen.name) {
-                ProfileScreen(modifier = Modifier.padding(innerPadding))
+                val context = LocalContext.current
+                ProfileScreen(context = context, modifier = Modifier.padding(innerPadding))
             }
         }
     }

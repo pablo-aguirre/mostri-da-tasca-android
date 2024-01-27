@@ -30,7 +30,7 @@ fun LeaderBoardScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun UserListItem(
-    image: String = stringResource(id = R.string.default_image),
+    image: String = stringResource(id = R.string.default_user_image),
     name: String,
     xp: String,
     onButtonClick: () -> Unit
