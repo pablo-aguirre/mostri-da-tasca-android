@@ -38,47 +38,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
-import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = viewModel(),
+    viewModel: ProfileViewModel,
     context: Context
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = uiState.name,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(10.dp)
-        )
-        ProfileImage(
-            image = uiState.picture ?: stringResource(id = R.string.default_user_image),
-            updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
-        )
-        UserInformation1(
-            newName = uiState.newName,
-            positionShare = uiState.positionShare,
-            buttonEnabled = uiState.isNewNameValid,
-            setNewName = { viewModel.setNewName(it) },
-            updateName = { viewModel.updateName(it) },
-            updatePositionShare = { viewModel.updatePositionShare(it) }
-        )
-        Divider()
-        UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
-        Divider()
+    when {
+        uiState.error -> Text(text = "Error", modifier = modifier)
+        uiState.loading -> Text(text = "Loading", modifier = modifier)
+        else ->
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.name,
+                    style = MaterialTheme.typography.displaySmall,
+                    modifier = Modifier.padding(10.dp)
+                )
+                ProfileImage(
+                    image = uiState.picture ?: stringResource(id = R.string.default_user_image),
+                    updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
+                )
+                UserInformation1(
+                    newName = uiState.newName,
+                    positionShare = uiState.positionShare,
+                    buttonEnabled = uiState.isNewNameValid,
+                    setNewName = { viewModel.setNewName(it) },
+                    updateName = { viewModel.updateName(it) },
+                    updatePositionShare = { viewModel.updatePositionShare(it) }
+                )
+                Divider()
+                UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
+                Divider()
+            }
     }
 }
 
@@ -201,7 +203,11 @@ fun SingleArtifact(
         ListItem(
             leadingContent = { Icon(Icons.Default.Star, contentDescription = null) },
             headlineContent = { Text("Level") },
-            trailingContent = { SuggestionChip(onClick = { /*TODO*/ }, label = { Text(level) }) }
+            trailingContent = {
+                SuggestionChip(
+                    onClick = { /*TODO*/ },
+                    label = { Text(level) })
+            }
         )
     }
 }
