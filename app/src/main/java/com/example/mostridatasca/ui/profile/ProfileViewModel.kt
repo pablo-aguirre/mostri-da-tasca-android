@@ -6,88 +6,52 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mostridatasca.data.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(
+    private val profileRepository: ProfileRepository = ProfileRepository()
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
-    private val repository = ProfileRepository()
+    val uiState = _uiState.asStateFlow()
 
     init {
-        getProfile()
-    }
-
-    private fun getProfile() {
-        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            try {
-                val user = repository.getUser()
-                _uiState.update {
-                    it.copy(
-                        name = user.name, picture = user.picture, positionShare = user.positionshare
-                    )
-                }
-            } catch (e: HttpException) {
-                _uiState.update { it.copy(error = true) }
-            } catch (e: IOException) {
-                _uiState.update { it.copy(error = true) }
+            profileRepository.observerProfile().collect {
+                _uiState.value = _uiState.value.copy(
+                    name = it.name,
+                    picture = it.picture,
+                    positionShare = it.positionshare,
+                    experience = it.experience.toString(),
+                    life = it.life.toString()
+                )
             }
         }
-        _uiState.update { it.copy(loading = false) }
     }
 
     fun setNewName(newName: String) {
         _uiState.update {
             it.copy(
                 newName = newName,
-                isNewNameValid = newName.isNotBlank() && newName.length <= 15
+                isNewNameValid = newName.isNotBlank() && newName.length <= 15 && newName != it.name
             )
         }
     }
 
     fun updateName(newName: String) {
-        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            try {
-                repository.updateUser(
-                    name = newName,
-                    picture = uiState.value.picture,
-                    positionShare = uiState.value.positionShare
-                )
-                _uiState.update { it.copy(name = newName, newName = "", isNewNameValid = false) }
-            } catch (e: HttpException) {
-                _uiState.update { it.copy(error = true) }
-            } catch (e: IOException) {
-                _uiState.update { it.copy(error = true) }
-            }
+            profileRepository.updateUser(name = newName)
         }
-        _uiState.update { it.copy(loading = false) }
+        _uiState.update { it.copy(newName = "", isNewNameValid = false) }
     }
 
     fun updatePositionShare(newValue: Boolean) {
-        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            try {
-                repository.updateUser(
-                    name = uiState.value.name,
-                    picture = uiState.value.picture,
-                    positionShare = newValue
-                )
-                _uiState.update { it.copy(positionShare = newValue) }
-            } catch (e: HttpException) {
-                _uiState.update { it.copy(error = true) }
-            } catch (e: IOException) {
-                _uiState.update { it.copy(error = true) }
-            }
+            profileRepository.updateUser(positionShare = newValue)
         }
-        _uiState.update { it.copy(loading = false) }
     }
 
     fun updatePicture(contentResolver: ContentResolver, pictureUri: Uri?) {
@@ -99,27 +63,14 @@ class ProfileViewModel : ViewModel() {
         }
         val inputStream: InputStream? = contentResolver.openInputStream(pictureUri ?: return)
         val imageBytes = inputStream?.readBytes()
+        inputStream?.close()
 
         val imageString =
             imageBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.DEFAULT) }
 
-        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            try {
-                repository.updateUser(
-                    name = uiState.value.name,
-                    picture = imageString,
-                    positionShare = uiState.value.positionShare
-                )
-                _uiState.update { it.copy(picture = imageString) }
-            } catch (e: HttpException) {
-                _uiState.update { it.copy(error = true) }
-            } catch (e: IOException) {
-                _uiState.update { it.copy(error = true) }
-            }
+            profileRepository.updateUser(picture = imageString)
         }
-        inputStream?.close();
-        _uiState.update { it.copy(loading = false) }
     }
 
 }
