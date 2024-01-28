@@ -12,6 +12,18 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 
+data class ProfileUiState(
+    val name: String = "",
+    val picture: String? = null,
+    val positionShare: Boolean = false,
+    val life: String = "100",
+    val experience: String = "0",
+    val newName: String = "",
+    val isNewNameValid: Boolean = false,
+    val loading: Boolean = false,
+    val error: Boolean = false
+)
+
 class ProfileViewModel(
     private val profileRepository: ProfileRepository = ProfileRepository()
 ) : ViewModel() {

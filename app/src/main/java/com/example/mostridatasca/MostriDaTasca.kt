@@ -30,6 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mostridatasca.ui.leaderboard.LeaderBoardScreen
+import com.example.mostridatasca.ui.leaderboard.LeaderBoardViewModel
 import com.example.mostridatasca.ui.map.MapScreen
 import com.example.mostridatasca.ui.objects.NearbyObjectsScreen
 import com.example.mostridatasca.ui.profile.ProfileScreen
@@ -46,6 +47,7 @@ fun MostriDaTasca(
     )
 
     val profileViewModel = viewModel(ProfileViewModel::class.java)
+    val leaderBoardViewModel = viewModel(LeaderBoardViewModel::class.java)
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(currentScreen.title) }) },
@@ -75,7 +77,10 @@ fun MostriDaTasca(
                 NearbyObjectsScreen(modifier = Modifier.padding(innerPadding))
             }
             composable(route = Screens.LeaderBoardScreen.name) {
-                LeaderBoardScreen(modifier = Modifier.padding(innerPadding))
+                LeaderBoardScreen(
+                    viewModel = leaderBoardViewModel,
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
             composable(route = Screens.ProfileScreen.name) {
                 val context = LocalContext.current
