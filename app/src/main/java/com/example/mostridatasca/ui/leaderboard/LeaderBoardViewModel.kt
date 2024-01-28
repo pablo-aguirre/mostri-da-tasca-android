@@ -11,12 +11,14 @@ import kotlinx.coroutines.launch
 
 
 data class LeaderBoardUiState(
-    val users: List<User> = emptyList()
+    val users: List<User> = emptyList(),
+    val selectedUser: User? = null
 )
 
 class LeaderBoardViewModel(
     private val usersRepository: UsersRepository = UsersRepository()
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(LeaderBoardUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -27,5 +29,10 @@ class LeaderBoardViewModel(
                 Log.d("LeaderBoardViewModel", "init, users: ${_uiState.value.users.size}")
             }
         }
+    }
+
+    fun selectUser(user: User?) {
+        Log.d("LeaderBoardViewModel", "selectUser: $user")
+        _uiState.value = _uiState.value.copy(selectedUser = user)
     }
 }

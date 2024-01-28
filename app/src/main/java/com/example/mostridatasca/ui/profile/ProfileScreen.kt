@@ -112,7 +112,6 @@ fun ProfileImage(
         ) {
             Icon(Icons.Outlined.Edit, contentDescription = null)
         }
-
     }
 }
 

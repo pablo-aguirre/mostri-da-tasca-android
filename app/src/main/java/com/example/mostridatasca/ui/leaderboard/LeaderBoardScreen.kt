@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.mostridatasca.model.User
 import com.example.mostridatasca.ui.ImageFromBase64
 
 @Composable
@@ -29,31 +30,35 @@ fun LeaderBoardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.surface)) {
-        items(uiState.users.size) { index ->
-            val user = uiState.users[index]
-            UserListItem(
-                image = user.picture,
-                name = user.name,
-                xp = user.experience.toString(),
-                onButtonClick = {}
-            )
-            Divider()
+    if (uiState.selectedUser != null) {
+        UserScreen(
+            user = uiState.selectedUser,
+            selectUser = { viewModel.selectUser(it) },
+            modifier = modifier
+        )
+    } else {
+        LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.surface)) {
+            items(uiState.users.size) { index ->
+                val user = uiState.users[index]
+                UserListItem(
+                    user = user,
+                    selectUser = { viewModel.selectUser(it) }
+                )
+                Divider()
+            }
         }
     }
 }
 
 @Composable
 fun UserListItem(
-    image: String?,
-    name: String,
-    xp: String,
-    onButtonClick: () -> Unit
+    user: User,
+    selectUser: (User) -> Unit
 ) {
     ListItem(
         leadingContent = {
             ImageFromBase64(
-                image = image
+                image = user.picture
                     ?: stringResource(id = com.example.mostridatasca.R.string.default_user_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -61,10 +66,10 @@ fun UserListItem(
                     .clip(CircleShape)
             )
         },
-        headlineContent = { Text(name) },
-        supportingContent = { Text("$xp XP") },
+        headlineContent = { Text(user.name) },
+        supportingContent = { Text("${user.experience} XP") },
         trailingContent = {
-            IconButton(onClick = onButtonClick) {
+            IconButton(onClick = { selectUser(user) }) {
                 Icon(Icons.Outlined.Info, contentDescription = null)
             }
         }
