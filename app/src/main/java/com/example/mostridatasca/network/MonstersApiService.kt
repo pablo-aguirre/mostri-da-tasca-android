@@ -1,7 +1,8 @@
 package com.example.mostridatasca.network
 
-import com.example.mostridatasca.model.Profile
 import com.example.mostridatasca.model.Session
+import com.example.mostridatasca.model.User
+import com.example.mostridatasca.model.UserRank
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
@@ -32,7 +33,7 @@ interface MonstersApiService {
     suspend fun getUser(
         @Path("id") id: Int,
         @Query("sid") sid: String
-    ): Profile
+    ): User
 
     @PATCH("users/{id}")
     @FormUrlEncoded
@@ -43,6 +44,11 @@ interface MonstersApiService {
         @Field("picture") picture: String?,
         @Field("positionshare") positionshare: Boolean
     )
+
+    @GET("ranking")
+    suspend fun getRankingList(
+        @Query("sid") sid: String
+    ): List<UserRank>
 }
 
 

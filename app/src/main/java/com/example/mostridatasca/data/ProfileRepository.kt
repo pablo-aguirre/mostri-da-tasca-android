@@ -1,8 +1,8 @@
 package com.example.mostridatasca.data
 
 import android.util.Log
-import com.example.mostridatasca.model.Profile
 import com.example.mostridatasca.model.Session
+import com.example.mostridatasca.model.User
 import com.example.mostridatasca.network.MonstersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,9 +12,9 @@ import kotlinx.coroutines.launch
 
 class ProfileRepository {
     private var session: Session = Session()
-    private val profile = MutableStateFlow(Profile())
+    private val profile = MutableStateFlow(User())
 
-    fun observerProfile(): Flow<Profile> = profile
+    fun observerProfile(): Flow<User> = profile
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
