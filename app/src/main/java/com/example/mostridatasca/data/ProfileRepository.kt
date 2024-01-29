@@ -65,6 +65,7 @@ class ProfileRepository(
                     picture = picture,
                     positionshare = positionShare
                 )
+                Log.d("ProfileRepository", "updateUser: ${profile.value}")
             } catch (e: Exception) {
                 Log.e("ProfileRepository", "updateUser: ${e.message}")
             }

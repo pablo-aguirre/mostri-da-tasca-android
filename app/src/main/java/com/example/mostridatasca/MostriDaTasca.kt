@@ -46,8 +46,6 @@ fun MostriDaTasca(
         backStackEntry?.destination?.route ?: Screens.MapScreen.name
     )
 
-    val leaderBoardViewModel = viewModel(LeaderBoardViewModel::class.java)
-
     Scaffold(
         topBar = { TopAppBar(title = { Text(currentScreen.title) }) },
         bottomBar = {
@@ -77,7 +75,7 @@ fun MostriDaTasca(
             }
             composable(route = Screens.LeaderBoardScreen.name) {
                 LeaderBoardScreen(
-                    viewModel = leaderBoardViewModel,
+                    viewModel = viewModel(factory = LeaderBoardViewModel.Factory),
                     modifier = Modifier.padding(innerPadding)
                 )
             }
