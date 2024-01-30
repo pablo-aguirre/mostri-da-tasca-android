@@ -8,6 +8,8 @@ data class User(
     @PrimaryKey
     val uid: Int = 0,
     val name: String = "",
+    val lat: Double? = null,
+    val lon: Double? = null,
     val life: Int = 0,
     val experience: Int = 0,
     val weapon: Int? = null,
