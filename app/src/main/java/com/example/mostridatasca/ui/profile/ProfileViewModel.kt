@@ -3,7 +3,11 @@ package com.example.mostridatasca.ui.profile
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.mostridatasca.MostriDaTascaApplication
 import com.example.mostridatasca.data.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +29,7 @@ data class ProfileUiState(
 )
 
 class ProfileViewModel(
-    private val profileRepository: ProfileRepository = ProfileRepository()
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
@@ -85,4 +89,13 @@ class ProfileViewModel(
         }
     }
 
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application =
+                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MostriDaTascaApplication)
+                ProfileViewModel(application.profileRepository)
+            }
+        }
+    }
 }
