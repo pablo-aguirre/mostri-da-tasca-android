@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
@@ -78,4 +79,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // Room
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    androidTestImplementation("androidx.room:room-testing:$rootProject.roomVersion")
 }

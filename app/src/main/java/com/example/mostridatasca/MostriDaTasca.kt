@@ -122,7 +122,7 @@ enum class Screens(
 @Composable
 fun MyNavigationBar(navigateToDestination: (String) -> Unit, currentScreen: Screens) {
     NavigationBar {
-        Screens.entries.forEach {
+        Screens.values().forEach {
             NavigationBarItem(
                 selected = currentScreen == it,
                 onClick = { navigateToDestination(it.name) },

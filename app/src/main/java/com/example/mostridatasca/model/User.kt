@@ -1,6 +1,11 @@
 package com.example.mostridatasca.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "users")
 data class User(
+    @PrimaryKey
     val uid: Int = 0,
     val name: String = "",
     val life: Int = 0,

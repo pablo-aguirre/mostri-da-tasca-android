@@ -45,7 +45,7 @@ class LeaderBoardViewModel(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MostriDaTascaApplication)
-                LeaderBoardViewModel(application.usersRepository)
+                LeaderBoardViewModel(application.container.usersRepository)
             }
         }
     }

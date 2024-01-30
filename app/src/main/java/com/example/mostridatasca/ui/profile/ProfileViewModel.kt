@@ -94,7 +94,7 @@ class ProfileViewModel(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MostriDaTascaApplication)
-                ProfileViewModel(application.profileRepository)
+                ProfileViewModel(application.container.profileRepository)
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.mostridatasca.data.local.UserDao
 import com.example.mostridatasca.model.User
 import com.example.mostridatasca.network.MonstersApi
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class UsersRepository(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val userDao: UserDao
 ) {
     private val users = MutableStateFlow<List<User>>(emptyList())
 
@@ -39,9 +41,13 @@ class UsersRepository(
                         MonstersApi.retrofitService.getRankingList(preferences[SID] ?: "")
                     val usersList =
                         rankingList.map {
-                            MonstersApi.retrofitService.getUser(it.uid, preferences[SID] ?: "")
+                            val user =
+                                MonstersApi.retrofitService.getUser(it.uid, preferences[SID] ?: "")
+                            userDao.insert(user)
+                            user
                         }
                     users.value = usersList
+                    Log.d("UsersRepository", "init, users: ${users.value.size}")
                 }
                 Log.d("UsersRepository", "init, users: ${users.value.size}")
             } catch (e: Exception) {
