@@ -22,13 +22,12 @@ data class LeaderBoardUiState(
 class LeaderBoardViewModel(
     private val usersRepository: UsersRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(LeaderBoardUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            usersRepository.observeUsers().collect {
+            usersRepository.leaderBoard.collect {
                 _uiState.value = _uiState.value.copy(users = it)
                 Log.d("LeaderBoardViewModel", "init, users: ${_uiState.value.users.size}")
             }
