@@ -9,6 +9,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
 import com.example.mostridatasca.data.ProfileRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -35,8 +37,8 @@ class ProfileViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            profileRepository.observerProfile().collect {
+        CoroutineScope(Dispatchers.IO).launch {
+            profileRepository.profile.collect {
                 _uiState.value = _uiState.value.copy(
                     name = it.name,
                     picture = it.picture,
@@ -59,14 +61,21 @@ class ProfileViewModel(
 
     fun updateName(newName: String) {
         viewModelScope.launch {
-            profileRepository.updateUser(name = newName)
+            profileRepository.updateUser(
+                newName,
+                _uiState.value.picture,
+                _uiState.value.positionShare
+            )
         }
-        _uiState.update { it.copy(newName = "", isNewNameValid = false) }
     }
 
     fun updatePositionShare(newValue: Boolean) {
         viewModelScope.launch {
-            profileRepository.updateUser(positionShare = newValue)
+            profileRepository.updateUser(
+                _uiState.value.name,
+                _uiState.value.picture,
+                newValue
+            )
         }
     }
 
@@ -85,7 +94,11 @@ class ProfileViewModel(
             imageBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.DEFAULT) }
 
         viewModelScope.launch {
-            profileRepository.updateUser(picture = imageString)
+            profileRepository.updateUser(
+                _uiState.value.name,
+                imageString,
+                _uiState.value.positionShare
+            )
         }
     }
 
