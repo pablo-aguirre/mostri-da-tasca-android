@@ -24,5 +24,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
         )
 
     override val profileRepository: ProfileRepository =
-        ProfileRepository(dataStore = context.dataStore)
+        ProfileRepository(
+            dataStore = context.dataStore,
+            userDao = AppDatabase.getDatabase(context).userDao()
+        )
 }

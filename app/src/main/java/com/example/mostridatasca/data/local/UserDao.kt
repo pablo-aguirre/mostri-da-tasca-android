@@ -17,6 +17,15 @@ interface UserDao {
     @Update
     suspend fun update(user: User)
 
+    @Query("UPDATE users SET name = :name WHERE uid = :uid")
+    suspend fun updateName(uid: Int, name: String)
+
+    @Query("UPDATE users SET picture = :picture WHERE uid = :uid")
+    suspend fun updatePicture(uid: Int, picture: String?)
+
+    @Query("UPDATE users SET positionshare = :positionshare WHERE uid = :uid")
+    suspend fun updatePositionShare(uid: Int, positionshare: Boolean)
+
     @Delete
     suspend fun delete(user: User)
 
