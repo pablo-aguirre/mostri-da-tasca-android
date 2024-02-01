@@ -33,6 +33,7 @@ import com.example.mostridatasca.ui.leaderboard.LeaderBoardScreen
 import com.example.mostridatasca.ui.leaderboard.LeaderBoardViewModel
 import com.example.mostridatasca.ui.map.MapScreen
 import com.example.mostridatasca.ui.objects.NearbyObjectsScreen
+import com.example.mostridatasca.ui.objects.NearbyObjectsViewModel
 import com.example.mostridatasca.ui.profile.ProfileScreen
 import com.example.mostridatasca.ui.profile.ProfileViewModel
 
@@ -71,7 +72,10 @@ fun MostriDaTasca(
                 MapScreen(modifier = Modifier.padding(innerPadding))
             }
             composable(route = Screens.NearbyObjectsScreen.name) {
-                NearbyObjectsScreen(modifier = Modifier.padding(innerPadding))
+                NearbyObjectsScreen(
+                    viewModel = viewModel(factory = NearbyObjectsViewModel.Factory),
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
             composable(route = Screens.LeaderBoardScreen.name) {
                 LeaderBoardScreen(
