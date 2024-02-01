@@ -83,4 +83,6 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     androidTestImplementation("androidx.room:room-testing:$rootProject.roomVersion")
+    // Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 }

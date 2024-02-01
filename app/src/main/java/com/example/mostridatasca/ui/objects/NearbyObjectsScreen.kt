@@ -13,23 +13,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.ui.ImageFromBase64
-import com.example.mostridatasca.ui.theme.MostriDaTascaTheme
 
 
 @Composable
-fun NearbyObjectsScreen(modifier: Modifier = Modifier) {
+fun NearbyObjectsScreen(
+    viewModel: NearbyObjectsViewModel,
+    modifier: Modifier = Modifier
+) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(modifier = modifier.background(MaterialTheme.colorScheme.primary)) {
-        Text("NearbyObjectsScreen")
+        Text("Latitude: ${uiState.latitude}")
+        Text("Longitude: ${uiState.longitude}")
     }
-
 }
 
 @Composable
@@ -61,24 +65,5 @@ fun ObjectListItem(
             }
         }
     )
-}
-
-@Preview
-@Composable
-fun MyPreview() {
-    MostriDaTascaTheme {
-        Column {
-            ObjectListItem(
-                name = "Monster1",
-                near = false,
-                onButtonClick = { TODO() }
-            )
-            ObjectListItem(
-                name = "Monster2",
-                near = true,
-                onButtonClick = { TODO() }
-            )
-        }
-    }
 }
 
