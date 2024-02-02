@@ -78,9 +78,11 @@ fun ObjectListItem(
         },
         headlineContent = { Text(virtualObject.name) },
         supportingContent = {
-            if (near) {
-                SuggestionChip(onClick = { /*TODO*/ }, label = { Text("Can be activated") })
-            }
+            SuggestionChip(
+                onClick = { selectObject(virtualObject) },
+                label = { Text(if (near) "Can be activated" else "Too far away") },
+                enabled = near
+            )
         },
         trailingContent = {
             IconButton(onClick = { selectObject(virtualObject) }) {
