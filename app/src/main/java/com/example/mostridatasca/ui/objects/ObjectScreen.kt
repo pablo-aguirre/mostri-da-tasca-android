@@ -40,6 +40,7 @@ fun ObjectScreen(
     virtualObject: VirtualObject?,
     selectObject: (VirtualObject?) -> Unit,
     activeObject: () -> Unit,
+    activable: Boolean,
     modifier: Modifier = Modifier
 ) {
     var confirmationRequired by rememberSaveable { mutableStateOf(false) }
@@ -66,7 +67,7 @@ fun ObjectScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 ImageFromBase64(
-                    image = virtualObject?.image ?: "",
+                    image = virtualObject?.image ?: defaultImage(virtualObject!!.type),
                     modifier = Modifier
                         .size(180.dp)
                         .padding(10.dp)
@@ -84,6 +85,7 @@ fun ObjectScreen(
         Divider()
         Button(
             onClick = { confirmationRequired = true },
+            enabled = activable,
             modifier = Modifier
                 .padding(10.dp)
                 .align(Alignment.End)

@@ -20,7 +20,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.mostridatasca.R
 import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.ui.ImageFromBase64
 import kotlinx.coroutines.launch
@@ -43,6 +45,7 @@ fun NearbyObjectsScreen(
                     viewModel.activeObject()
                 }
             },
+            activable = viewModel.isNear(uiState.selectedObject!!),
             modifier = modifier
         )
     } else {
@@ -69,7 +72,7 @@ fun ObjectListItem(
     ListItem(
         leadingContent = {
             ImageFromBase64(
-                image = virtualObject.image ?: "",
+                image = virtualObject.image ?: defaultImage(virtualObject.type),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(80.dp)
@@ -92,3 +95,14 @@ fun ObjectListItem(
     )
 }
 
+@Composable
+fun defaultImage(type: String): String {
+    return when (type) {
+        "weapon" -> stringResource(R.string.default_weapon_image)
+        "armor" -> stringResource(R.string.default_armor_image)
+        "amulet" -> stringResource(R.string.default_amulet_image)
+        "monster" -> stringResource(R.string.default_monster_image)
+        "candy" -> stringResource(R.string.default_candy_image)
+        else -> ""
+    }
+}
