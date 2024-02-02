@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.mostridatasca.data.local.ObjectDao
 import com.example.mostridatasca.data.local.UserDao
 import com.example.mostridatasca.model.User
 import com.example.mostridatasca.model.VirtualObject
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 
 class ProfileRepository(
     private val dataStore: DataStore<Preferences>,
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val objectDao: ObjectDao
 ) {
     private companion object {
         val SID = stringPreferencesKey("sid")
@@ -31,6 +33,14 @@ class ProfileRepository(
         val uid = preferences[UID] ?: 0
         users.find { it.uid == uid } ?: User()
     }
+
+    val artifacts: Flow<List<VirtualObject>> =
+        userDao.getAllUsers().combine(dataStore.data) { users, preferences ->
+            users.filter { it.uid == preferences[UID] }
+        }.combine(objectDao.getAllObjects()) { users, virtualObjects ->
+            val myUser = users.get(0)
+            virtualObjects.filter { it.id == myUser.weapon || it.id == myUser.amulet || it.id == myUser.armor }
+        }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {

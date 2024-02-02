@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
 import com.example.mostridatasca.data.ProfileRepository
+import com.example.mostridatasca.model.VirtualObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,10 +25,9 @@ data class ProfileUiState(
     val positionShare: Boolean = false,
     val life: String = "100",
     val experience: String = "0",
+    val artifacts: List<VirtualObject> = emptyList(),
     val newName: String = "",
-    val isNewNameValid: Boolean = false,
-    val loading: Boolean = false,
-    val error: Boolean = false
+    val isNewNameValid: Boolean = false
 )
 
 class ProfileViewModel(
@@ -46,6 +46,11 @@ class ProfileViewModel(
                     experience = it.experience.toString(),
                     life = it.life.toString()
                 )
+            }
+        }
+        viewModelScope.launch {
+            profileRepository.artifacts.collect {
+                _uiState.value = _uiState.value.copy(artifacts = it)
             }
         }
     }
@@ -81,10 +86,7 @@ class ProfileViewModel(
 
     fun updatePicture(contentResolver: ContentResolver, pictureUri: Uri?) {
         File(pictureUri?.path ?: return).length().let {
-            if (it > 100000) {
-                _uiState.update { it.copy(error = true) }
-                return
-            }
+            if (it > 100000) return
         }
         val inputStream: InputStream? = contentResolver.openInputStream(pictureUri ?: return)
         val imageBytes = inputStream?.readBytes()
