@@ -17,7 +17,7 @@ class ObjectsRepository(
     private val locationClient: LocationClient,
 ) {
     val nearbyObjects: Flow<List<VirtualObject>> =
-        locationClient.getLocationUpdates(2000).combine(dataStore.data) { location, preferences ->
+        locationClient.getLocationUpdates(5000).combine(dataStore.data) { location, preferences ->
             Log.d(
                 "ObjectsRepository",
                 "updateObjects, location: ${location.latitude}, ${location.longitude}"

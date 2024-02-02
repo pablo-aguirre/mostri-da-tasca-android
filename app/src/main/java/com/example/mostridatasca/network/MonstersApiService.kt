@@ -1,5 +1,6 @@
 package com.example.mostridatasca.network
 
+import com.example.mostridatasca.model.ActiveObjectResponse
 import com.example.mostridatasca.model.NearbyObject
 import com.example.mostridatasca.model.Session
 import com.example.mostridatasca.model.User
@@ -64,6 +65,13 @@ interface MonstersApiService {
     suspend fun getRankingList(
         @Query("sid") sid: String
     ): List<UserRank>
+
+    @POST("objects/{id}/activate")
+    @FormUrlEncoded
+    suspend fun activateObject(
+        @Path("id") id: Int,
+        @Field("sid") sid: String
+    ): ActiveObjectResponse
 }
 
 

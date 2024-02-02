@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.mostridatasca.data.local.UserDao
 import com.example.mostridatasca.model.User
+import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +63,10 @@ class ProfileRepository(
     ) {
         dataStore.data.collectLatest {
             try {
-                Log.d("ProfileRepository", "updateUser: ${it[UID]}, $name, $picture, $positionShare")
+                Log.d(
+                    "ProfileRepository",
+                    "updateUser: ${it[UID]}, $name, $picture, $positionShare"
+                )
                 MonstersApi.retrofitService.updateUser(
                     it[UID]!!,
                     it[SID]!!,
@@ -76,6 +80,18 @@ class ProfileRepository(
             } catch (e: Exception) {
                 Log.e("ProfileRepository", "updateUser: ${e.message}")
             }
+        }
+    }
+
+    suspend fun updateUserStatus(virtualObject: VirtualObject, life: Int, experience: Int) {
+        dataStore.data.collectLatest {
+            when (virtualObject.type) {
+                "weapon" -> userDao.updateWeapon(it[UID]!!, virtualObject.id)
+                "armor" -> userDao.updateArmor(it[UID]!!, virtualObject.id)
+                "amulet" -> userDao.updateAmulet(it[UID]!!, virtualObject.id)
+            }
+            userDao.updateLife(it[UID]!!, life)
+            userDao.updateExperience(it[UID]!!, experience)
         }
     }
 }

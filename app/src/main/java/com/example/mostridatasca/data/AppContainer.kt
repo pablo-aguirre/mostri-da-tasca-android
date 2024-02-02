@@ -14,6 +14,7 @@ interface AppContainer {
     val profileRepository: ProfileRepository
     val objectsRepository: ObjectsRepository
     val locationClient: LocationClient
+    val dataStore: DataStore<Preferences>
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -21,6 +22,8 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class AppDataContainer(private val context: Context) : AppContainer {
+
+    override val dataStore: DataStore<Preferences> = context.dataStore
 
     override val locationClient: LocationClient = DefaultLocationClient(
         context.applicationContext,
