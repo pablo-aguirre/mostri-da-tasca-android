@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun MapScreen(
+    viewModel: MapViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.background(MaterialTheme.colorScheme.primary)) {

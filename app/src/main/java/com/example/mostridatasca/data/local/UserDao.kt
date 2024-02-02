@@ -35,11 +35,8 @@ interface UserDao {
     @Query("UPDATE users SET amulet = :amulet WHERE uid = :uid")
     suspend fun updateAmulet(uid: Int, amulet: Int)
 
-    @Query("UPDATE users SET life = :life WHERE uid = :uid")
-    suspend fun updateLife(uid: Int, life: Int)
-
-    @Query("UPDATE users SET experience = :experience WHERE uid = :uid")
-    suspend fun updateExperience(uid: Int, experience: Int)
+    @Query("UPDATE users SET life = :life, experience = :experience WHERE uid = :uid")
+    suspend fun updateStatus(uid: Int, life: Int, experience: Int)
 
     @Delete
     suspend fun delete(user: User)

@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.ui.ImageFromBase64
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -40,11 +39,7 @@ fun NearbyObjectsScreen(
         ObjectScreen(
             virtualObject = uiState.selectedObject,
             selectObject = { viewModel.selectObject(it) },
-            activeObject = {
-                coroutineScope.launch {
-                    viewModel.activeObject()
-                }
-            },
+            activeObject = { viewModel.activeObject() },
             activable = viewModel.isNear(uiState.selectedObject!!),
             modifier = modifier
         )

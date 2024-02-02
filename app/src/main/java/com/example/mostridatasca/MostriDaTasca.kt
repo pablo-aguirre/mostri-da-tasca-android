@@ -32,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mostridatasca.ui.leaderboard.LeaderBoardScreen
 import com.example.mostridatasca.ui.leaderboard.LeaderBoardViewModel
 import com.example.mostridatasca.ui.map.MapScreen
+import com.example.mostridatasca.ui.map.MapViewModel
 import com.example.mostridatasca.ui.objects.NearbyObjectsScreen
 import com.example.mostridatasca.ui.objects.NearbyObjectsViewModel
 import com.example.mostridatasca.ui.profile.ProfileScreen
@@ -69,7 +70,10 @@ fun MostriDaTasca(
             startDestination = Screens.MapScreen.name
         ) {
             composable(route = Screens.MapScreen.name) {
-                MapScreen(modifier = Modifier.padding(innerPadding))
+                MapScreen(
+                    viewModel = viewModel(factory = MapViewModel.Factory),
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
             composable(route = Screens.NearbyObjectsScreen.name) {
                 NearbyObjectsScreen(

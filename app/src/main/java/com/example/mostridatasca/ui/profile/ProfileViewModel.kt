@@ -71,6 +71,7 @@ class ProfileViewModel(
                 _uiState.value.picture,
                 _uiState.value.positionShare
             )
+            _uiState.value = _uiState.value.copy(newName = "")
         }
     }
 

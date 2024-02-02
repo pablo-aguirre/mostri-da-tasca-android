@@ -156,7 +156,7 @@ fun customText(type: String): String {
 
 fun customText2(virtualObject: VirtualObject): String {
     return when (virtualObject.type) {
-        "monster" -> "You could loose life and gain experience in a range of ${virtualObject.level} to ${virtualObject.level * 2}.\n If you die, you will lose experience, equipment and your life will be reset to 100."
+        "monster" -> "You could loose life and gain experience in a range of ${virtualObject.level} to ${virtualObject.level * 2}.\nIf you die, you will lose experience, equipment and your life will be reset to 100."
         "candy" -> "You will increase your life in a range of ${virtualObject.level} to ${virtualObject.level * 2}."
         else -> "You will substitute your current ${virtualObject.type} with this one."
     }

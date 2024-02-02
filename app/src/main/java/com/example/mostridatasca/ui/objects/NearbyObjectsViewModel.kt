@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
@@ -18,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -48,7 +48,7 @@ class NearbyObjectsViewModel(
                 Log.d("NearbyObjectsViewModel", "init, objects: ${_uiState.value.objects.size}")
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             locationClient.getLocationUpdates(5000).collect {
                 _uiState.value =
                     _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
@@ -66,54 +66,49 @@ class NearbyObjectsViewModel(
 
     fun isNear(virtualObject: VirtualObject): Boolean {
         val distance = calculateDistance(
-            _uiState.value.latitude,
-            _uiState.value.longitude,
-            virtualObject.lat,
-            virtualObject.lon
+            _uiState.value.latitude, _uiState.value.longitude, virtualObject.lat, virtualObject.lon
         )
         return distance < 100
     }
 
-    fun calculateDistance(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
+    private fun calculateDistance(
+        lat1: Double, lon1: Double, lat2: Double, lon2: Double
     ): Double {
         val R = 6371.0 // Raggio medio della Terra in chilometri
 
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
 
-        val a = sin(dLat / 2) * sin(dLat / 2) +
-                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
-                sin(dLon / 2) * sin(dLon / 2)
+        val a =
+            sin(dLat / 2) * sin(dLat / 2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(
+                dLon / 2
+            ) * sin(dLon / 2)
 
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         return R * c * 1000
     }
 
-    suspend fun activeObject() {
-        try {
-            dataStore.data.collectLatest {
-                val result = MonstersApi.retrofitService.activateObject(
-                    _uiState.value.selectedObject!!.id,
-                    it[stringPreferencesKey("sid")]!!
-                )
-                Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                profileRepository.updateUserStatus(
-                    _uiState.value.selectedObject!!,
-                    result.life,
-                    result.experience
-                )
+    fun activeObject() {
+        viewModelScope.launch {
+            try {
+                dataStore.data.collect {
+                    val result = MonstersApi.retrofitService.activateObject(
+                        _uiState.value.selectedObject!!.id, it[SID]!!
+                    )
+                    Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
+                    profileRepository.updateUserStatus(
+                        _uiState.value.selectedObject!!, result.life, result.experience
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("NearbyObjectsViewModel", "activeObject, error: $e")
             }
-        } catch (e: Exception) {
-            Log.e("NearbyObjectsViewModel", "activeObject, error: $e")
         }
     }
 
     companion object {
+        val SID = stringPreferencesKey("sid")
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application =

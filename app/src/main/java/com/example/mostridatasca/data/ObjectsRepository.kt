@@ -18,10 +18,6 @@ class ObjectsRepository(
 ) {
     val nearbyObjects: Flow<List<VirtualObject>> =
         locationClient.getLocationUpdates(5000).combine(dataStore.data) { location, preferences ->
-            Log.d(
-                "ObjectsRepository",
-                "updateObjects, location: ${location.latitude}, ${location.longitude}"
-            )
             val nearbyObjects = MonstersApi.retrofitService.getNearbyObjects(
                 location.latitude,
                 location.longitude,
@@ -29,15 +25,15 @@ class ObjectsRepository(
             )
             nearbyObjects.forEach {
                 if (objectDao.getObject(it.id) == null) {
-                    Log.d("ObjectsRepository", "updateObjects, insert: ${it.id}")
+                    Log.d("ObjectsRepository", "insert object: ${it.id}")
                     val virtualObject =
                         MonstersApi.retrofitService.getObject(it.id, preferences[SID]!!)
                     objectDao.insert(virtualObject)
                 }
             }
             nearbyObjects.map { it.id }
-        }.combine(objectDao.getAllObjects()) { currentTop, objects ->
-            objects.filter { it.id in currentTop }
+        }.combine(objectDao.getAllObjects()) { nearbyObjects, objects ->
+            objects.filter { it.id in nearbyObjects }
         }
 
 
