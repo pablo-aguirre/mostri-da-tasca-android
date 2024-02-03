@@ -47,5 +47,18 @@ fun MapScreen(
                 )
             )
         }
+        uiState.users.forEach { user ->
+            Marker(
+                position = LatLng(user.lat!!, user.lon!!),
+                title = user.name,
+                snippet = "Long press to open details",
+                onInfoWindowLongClick = {},
+                onClick = {
+                    it.showInfoWindow()
+                    true
+                },
+                icon = BitmapDescriptorFactory.fromResource(R.drawable.player)
+            )
+        }
     }
 }

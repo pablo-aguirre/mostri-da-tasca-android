@@ -4,6 +4,7 @@ import com.example.mostridatasca.model.ActiveObjectResponse
 import com.example.mostridatasca.model.NearbyObject
 import com.example.mostridatasca.model.Session
 import com.example.mostridatasca.model.User
+import com.example.mostridatasca.model.UserNearby
 import com.example.mostridatasca.model.UserRank
 import com.example.mostridatasca.model.VirtualObject
 import retrofit2.Retrofit
@@ -72,21 +73,11 @@ interface MonstersApiService {
         @Path("id") id: Int,
         @Field("sid") sid: String
     ): ActiveObjectResponse
+
+    @GET("users")
+    suspend fun nearbyUsers(
+        @Query("sid") sid: String,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double
+    ): List<UserNearby>
 }
-
-
-/*
-    @POST("objects/{ID}/activate")
-    @FormUrlEncoded
-    Call<ActiveObjectResponse> activateObject(
-            @Path("ID") int ID,
-            @Field("sid") String sid
-    );
-
-    @GET("users/")
-    Call<List<UsersResponse>> users(
-            @Query("sid") String sid,
-            @Query("lat") double lat,
-            @Query("lon") double lon
-    );
-    */
