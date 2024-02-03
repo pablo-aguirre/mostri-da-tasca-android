@@ -21,8 +21,12 @@ fun ImageFromBase64(
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit
 ) {
-    val byteArray = Base64.decode(image, Base64.DEFAULT);
-    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    val bitmap = try {
+        val byteArray = Base64.decode(image, Base64.DEFAULT);
+        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    } catch (e: Exception) {
+        null
+    }
     if (bitmap == null) {
         Box(
             modifier = modifier
