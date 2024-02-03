@@ -88,7 +88,7 @@ fun ObjectScreen(
             enabled = activable,
             modifier = Modifier
                 .padding(10.dp)
-                .align(Alignment.End)
+                .align(Alignment.CenterHorizontally)
         ) {
             Text(text = customText(virtualObject!!.type))
         }

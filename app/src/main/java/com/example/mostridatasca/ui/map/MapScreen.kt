@@ -1,6 +1,7 @@
 package com.example.mostridatasca.ui.map
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,7 +57,9 @@ fun MapScreen(
                 )
             ) {
                 Column(
-                    modifier = Modifier.width(180.dp)
+                    modifier = Modifier
+                        .width(180.dp)
+                        .padding(10.dp)
                 ) {
                     Text(
                         text = virtualObject.name,
@@ -72,14 +75,31 @@ fun MapScreen(
                             .align(Alignment.CenterHorizontally),
                         contentScale = ContentScale.Crop
                     )
-                    Text(
-                        text = "Type: ${virtualObject.type}",
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                    Text(
-                        text = "Level: ${virtualObject.level}",
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                    // 2 Text allineati a sinistra e uno a destra
+                    Row {
+                        Text(
+                            text = "Type:",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = virtualObject.type,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = "Level:",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = virtualObject.level.toString(),
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         }
@@ -93,7 +113,9 @@ fun MapScreen(
                 ), icon = BitmapDescriptorFactory.fromResource(R.drawable.player)
             ) {
                 Column(
-                    modifier = Modifier.width(180.dp)
+                    modifier = Modifier
+                        .width(180.dp)
+                        .padding(10.dp)
                 ) {
                     Text(
                         text = user.name,
@@ -109,14 +131,30 @@ fun MapScreen(
                             .align(Alignment.CenterHorizontally),
                         contentScale = ContentScale.Crop
                     )
-                    Text(
-                        text = "Life points: ${user.life}",
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                    Text(
-                        text = "Experience: ${user.experience}",
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                    Row {
+                        Text(
+                            text = "Life points:",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = user.life.toString(),
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = "Experience:",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = user.experience.toString(),
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         }
