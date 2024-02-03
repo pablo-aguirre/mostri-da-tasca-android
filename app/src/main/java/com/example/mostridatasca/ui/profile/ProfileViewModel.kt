@@ -89,7 +89,7 @@ class ProfileViewModel(
         File(pictureUri?.path ?: return).length().let {
             if (it > 100000) return
         }
-        val inputStream: InputStream? = contentResolver.openInputStream(pictureUri ?: return)
+        val inputStream: InputStream? = contentResolver.openInputStream(pictureUri)
         val imageBytes = inputStream?.readBytes()
         inputStream?.close()
 

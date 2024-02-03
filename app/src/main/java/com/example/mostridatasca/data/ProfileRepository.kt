@@ -32,7 +32,7 @@ class ProfileRepository(
         userDao.getAllUsers().combine(dataStore.data) { users, preferences ->
             users.filter { it.uid == preferences[UID] }
         }.combine(objectDao.getAllObjects()) { users, virtualObjects ->
-            val myUser = users.get(0)
+            val myUser = users[0]
             virtualObjects.filter { it.id == myUser.weapon || it.id == myUser.amulet || it.id == myUser.armor }
         }
 
