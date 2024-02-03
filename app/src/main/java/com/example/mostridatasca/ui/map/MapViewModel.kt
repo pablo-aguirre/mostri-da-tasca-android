@@ -13,13 +13,25 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
 import com.example.mostridatasca.data.ProfileRepository
+import com.example.mostridatasca.location.LocationClient
 import com.example.mostridatasca.network.MonstersApi
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+data class MapUiState(
+    val prova: Int = 0
+)
 
 class MapViewModel(
     private val dataStore: DataStore<Preferences>,
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
+    private val _uiState = MutableStateFlow(MapUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
