@@ -57,6 +57,7 @@ class ProfileRepository(
                 userDao.updateName(it[UID]!!, name)
                 userDao.updatePicture(it[UID]!!, picture)
                 userDao.updatePositionShare(it[UID]!!, positionShare)
+                userDao.updateVersion(it[UID]!!)
             } catch (e: Exception) {
                 Log.e("ProfileRepository", "updateUser: ${e.message}")
             }

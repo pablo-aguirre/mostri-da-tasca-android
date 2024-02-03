@@ -49,4 +49,7 @@ interface UserDao {
 
     @Query("DELETE FROM users")
     fun deleteAll()
+
+    @Query("UPDATE users SET profileversion = profileversion + 1 WHERE uid = :uid")
+    suspend fun updateVersion(uid: Int)
 }
