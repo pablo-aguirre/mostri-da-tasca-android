@@ -12,23 +12,24 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
+import com.example.mostridatasca.data.ObjectsRepository
 import com.example.mostridatasca.data.ProfileRepository
-import com.example.mostridatasca.location.LocationClient
+import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class MapUiState(
-    val prova: Int = 0
+    val objects: List<VirtualObject> = emptyList(),
 )
 
 class MapViewModel(
     private val dataStore: DataStore<Preferences>,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val objectsRepository: ObjectsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
@@ -56,6 +57,11 @@ class MapViewModel(
                 Log.e("MapViewModel", "init: ${e.message}")
             }
         }
+        CoroutineScope(Dispatchers.IO).launch {
+            objectsRepository.nearbyObjects.collect {
+                _uiState.value = _uiState.value.copy(objects = it)
+            }
+        }
     }
 
     companion object {
@@ -67,7 +73,8 @@ class MapViewModel(
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MostriDaTascaApplication)
                 MapViewModel(
                     application.container.dataStore,
-                    application.container.profileRepository
+                    application.container.profileRepository,
+                    application.container.objectsRepository
                 )
             }
         }
