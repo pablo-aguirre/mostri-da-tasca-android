@@ -35,18 +35,15 @@ fun MapScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     GoogleMap(
-        modifier = modifier, properties = MapProperties(
-            isMyLocationEnabled = true, minZoomPreference = 12.0f
-        )
+        modifier = modifier,
+        properties = MapProperties(isMyLocationEnabled = true, minZoomPreference = 12.0f)
     ) {
         uiState.objects.forEach { virtualObject ->
-
             MarkerInfoWindowContent(
                 state = MarkerState(
-                    position = LatLng(
-                        virtualObject.lat, virtualObject.lon
-                    )
-                ), icon = BitmapDescriptorFactory.fromResource(
+                    position = LatLng(virtualObject.lat, virtualObject.lon)
+                ),
+                icon = BitmapDescriptorFactory.fromResource(
                     when (virtualObject.type) {
                         "candy" -> R.drawable.candy
                         "weapon" -> R.drawable.weapon
@@ -59,104 +56,70 @@ fun MapScreen(
                 Column(
                     modifier = Modifier
                         .width(180.dp)
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = virtualObject.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    ImageFromBase64(
-                        image = virtualObject.image ?: defaultImage(virtualObject.type),
-                        modifier = Modifier
-                            .size(90.dp)
-                            .padding(10.dp)
-                            .clip(CircleShape)
-                            .align(Alignment.CenterHorizontally),
-                        contentScale = ContentScale.Crop
-                    )
-                    // 2 Text allineati a sinistra e uno a destra
-                    Row {
-                        Text(
-                            text = "Type:",
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = virtualObject.type,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row {
-                        Text(
-                            text = "Level:",
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = virtualObject.level.toString(),
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    MarkerTitle(virtualObject.name)
+                    MarkerImage(virtualObject.image ?: defaultImage(virtualObject.type))
+                    MarkerInformation(left = "Type:", right = virtualObject.type)
+                    MarkerInformation(left = "Level:", right = virtualObject.level.toString())
                 }
             }
         }
         uiState.users.forEach { user ->
-
             MarkerInfoWindowContent(
                 state = MarkerState(
-                    position = LatLng(
-                        user.lat!!, user.lon!!
-                    )
+                    position = LatLng(user.lat!!, user.lon!!)
                 ), icon = BitmapDescriptorFactory.fromResource(R.drawable.player)
             ) {
                 Column(
                     modifier = Modifier
                         .width(180.dp)
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = user.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    ImageFromBase64(
-                        image = user.picture ?: stringResource(id = R.string.default_user_image),
-                        modifier = Modifier
-                            .size(90.dp)
-                            .padding(10.dp)
-                            .clip(CircleShape)
-                            .align(Alignment.CenterHorizontally),
-                        contentScale = ContentScale.Crop
-                    )
-                    Row {
-                        Text(
-                            text = "Life points:",
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = user.life.toString(),
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row {
-                        Text(
-                            text = "Experience:",
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = user.experience.toString(),
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    MarkerTitle(user.name)
+                    MarkerImage(user.picture ?: stringResource(R.string.default_user_image))
+                    MarkerInformation(left = "Life points:", right = user.life.toString())
+                    MarkerInformation(left = "Experience:", right = user.experience.toString())
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MarkerTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.bodyLarge
+    )
+}
+
+@Composable
+private fun MarkerImage(image: String) {
+    ImageFromBase64(
+        image = image,
+        modifier = Modifier
+            .size(90.dp)
+            .padding(10.dp)
+            .clip(CircleShape),
+        contentScale = ContentScale.Crop
+    )
+}
+
+@Composable
+fun MarkerInformation(left: String, right: String) {
+    Row {
+        Text(
+            text = left,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = right,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
