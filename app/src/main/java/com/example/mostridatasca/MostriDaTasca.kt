@@ -45,7 +45,7 @@ fun MostriDaTasca(
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = Screens.valueOf(
-        backStackEntry?.destination?.route ?: Screens.MapScreen.name
+        backStackEntry?.destination?.route ?: Screens.Map.name
     )
 
     Scaffold(
@@ -67,27 +67,27 @@ fun MostriDaTasca(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screens.MapScreen.name
+            startDestination = Screens.Map.name
         ) {
-            composable(route = Screens.MapScreen.name) {
+            composable(route = Screens.Map.name) {
                 MapScreen(
                     viewModel = viewModel(factory = MapViewModel.Factory),
                     modifier = Modifier.padding(innerPadding)
                 )
             }
-            composable(route = Screens.NearbyObjectsScreen.name) {
+            composable(route = Screens.Objects.name) {
                 NearbyObjectsScreen(
                     viewModel = viewModel(factory = NearbyObjectsViewModel.Factory),
                     modifier = Modifier.padding(innerPadding)
                 )
             }
-            composable(route = Screens.LeaderBoardScreen.name) {
+            composable(route = Screens.LeaderBoard.name) {
                 LeaderBoardScreen(
                     viewModel = viewModel(factory = LeaderBoardViewModel.Factory),
                     modifier = Modifier.padding(innerPadding)
                 )
             }
-            composable(route = Screens.ProfileScreen.name) {
+            composable(route = Screens.Profile.name) {
                 val context = LocalContext.current
 
                 ProfileScreen(
@@ -105,22 +105,22 @@ enum class Screens(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
 ) {
-    MapScreen(
+    Map(
         title = "Map",
         selectedIcon = Icons.Filled.Place,
         unselectedIcon = Icons.Outlined.Place
     ),
-    NearbyObjectsScreen(
-        title = "Objects",
+    Objects(
+        title = "Nearby objects",
         selectedIcon = Icons.Filled.List,
         unselectedIcon = Icons.Outlined.List
     ),
-    LeaderBoardScreen(
+    LeaderBoard(
         title = "Leaderboard",
         selectedIcon = Icons.Filled.Star,
         unselectedIcon = Icons.Outlined.Star
     ),
-    ProfileScreen(
+    Profile(
         title = "Profile",
         selectedIcon = Icons.Filled.Face,
         unselectedIcon = Icons.Outlined.Face,
@@ -140,7 +140,7 @@ fun MyNavigationBar(navigateToDestination: (String) -> Unit, currentScreen: Scre
                     else
                         Icon(it.unselectedIcon, contentDescription = null)
                 },
-                label = { Text(it.title) }
+                label = { Text(it.name) }
             )
         }
     }

@@ -78,7 +78,7 @@ fun ProfileScreen(
         UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
         Divider()
         Text(
-            text = "Artifacts",
+            text = if (uiState.artifacts.isEmpty()) "No artifacts" else "Your Artifacts",
             style = MaterialTheme.typography.displaySmall,
             modifier = Modifier.padding(10.dp)
         )
@@ -189,7 +189,6 @@ fun SingleArtifact(
     type: String,
     level: String
 ) {
-    // rendi visibile tutto il contenuto
     ElevatedCard(
         modifier = Modifier
             .padding(8.dp)
