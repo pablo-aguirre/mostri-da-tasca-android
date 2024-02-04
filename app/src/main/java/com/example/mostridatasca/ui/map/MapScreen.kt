@@ -36,7 +36,7 @@ fun MapScreen(
 
     GoogleMap(
         modifier = modifier,
-        properties = MapProperties(isMyLocationEnabled = true, minZoomPreference = 12.0f)
+        properties = MapProperties(isMyLocationEnabled = true)
     ) {
         uiState.objects.forEach { virtualObject ->
             MarkerInfoWindowContent(
