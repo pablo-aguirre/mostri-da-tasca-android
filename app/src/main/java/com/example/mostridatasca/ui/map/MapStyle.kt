@@ -1,7 +1,7 @@
 package com.example.mostridatasca.ui.map
 
 object MapStyle {
-    val json = """
+    val jsonGreen = """
         [
             {
                 "featureType": "administrative",
@@ -288,6 +288,57 @@ object MapStyle {
                 "stylers": [
                     {
                         "color": "#5ddad6"
+                    }
+                ]
+            }
+        ]
+    """.trimIndent()
+
+    val jsonBlue = """
+        [
+            {
+                "featureType": "all",
+                "stylers": [
+                    {
+                        "saturation": 0
+                    },
+                    {
+                        "hue": "#e7ecf0"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "stylers": [
+                    {
+                        "saturation": -70
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "stylers": [
+                    {
+                        "visibility": "simplified"
+                    },
+                    {
+                        "saturation": -60
                     }
                 ]
             }

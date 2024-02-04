@@ -46,7 +46,7 @@ fun MapScreen(
         modifier = modifier,
         properties = MapProperties(
             isMyLocationEnabled = true,
-            mapStyleOptions = MapStyleOptions(MapStyle.json)
+            mapStyleOptions = MapStyleOptions(MapStyle.jsonBlue)
         )
     ) {
         uiState.objects.forEach { virtualObject ->

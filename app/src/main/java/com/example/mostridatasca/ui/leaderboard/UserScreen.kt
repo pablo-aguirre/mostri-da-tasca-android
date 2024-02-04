@@ -91,7 +91,7 @@ fun UserScreen(
                     .height(300.dp),
                 properties = MapProperties(
                     minZoomPreference = 12.0f,
-                    mapStyleOptions = MapStyleOptions(MapStyle.json)
+                    mapStyleOptions = MapStyleOptions(MapStyle.jsonBlue)
                 ),
                 cameraPositionState = CameraPositionState(
                     position = CameraPosition(LatLng(user.lat!!, user.lon!!), 0.0f, 0.0f, 0.0f)
