@@ -20,11 +20,13 @@ import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 data class MapUiState(
     val objects: List<VirtualObject> = emptyList(),
     val users: List<User> = emptyList(),
+    val errorMessage: String = ""
 )
 
 class MapViewModel(
@@ -40,7 +42,13 @@ class MapViewModel(
         viewModelScope.launch {
             dataStore.edit { preferences ->
                 if (preferences[SID] == null) {
-                    val session = MonstersApi.retrofitService.getSession()
+                    val session = try {
+                        MonstersApi.retrofitService.getSession()
+                    } catch (e: Exception) {
+                        _uiState.value =
+                            _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app")
+                        return@edit
+                    }
                     preferences[SID] = session.sid
                     preferences[UID] = session.uid
                     profileRepository.insertUser(
@@ -51,20 +59,40 @@ class MapViewModel(
                     )
                 }
             }
-            dataStore.data.collect {
-                Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
-            }
+            dataStore.data
+                .catch {
+                    _uiState.value =
+                        _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app")
+                }.collect {
+                    Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
+                }
         }
         viewModelScope.launch {
-            objectsRepository.nearbyObjects.collect {
-                _uiState.value = _uiState.value.copy(objects = it)
-            }
+            objectsRepository.nearbyObjects
+                .catch {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Error getting nearby objects. Check your internet connection and restart the app"
+                    )
+                }
+                .collect {
+                    _uiState.value = _uiState.value.copy(objects = it)
+                }
         }
         viewModelScope.launch {
-            usersRepository.nearbyUsers.collect {
-                _uiState.value = _uiState.value.copy(users = it)
-            }
+            usersRepository.nearbyUsers
+                .catch {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Error getting nearby users. Check your internet connection and restart the app"
+                    )
+                }
+                .collect {
+                    _uiState.value = _uiState.value.copy(users = it)
+                }
         }
+    }
+
+    fun deleteError() {
+        _uiState.value = _uiState.value.copy(errorMessage = "")
     }
 
     companion object {

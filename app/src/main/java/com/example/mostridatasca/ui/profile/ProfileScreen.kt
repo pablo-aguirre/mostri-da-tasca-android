@@ -21,7 +21,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -92,6 +95,19 @@ fun ProfileScreen(
                 )
             }
         }
+    }
+    if (uiState.errorMessage.isNotBlank()) {
+        AlertDialog(
+            onDismissRequest = { /* Do nothing */ },
+            icon = { Icon(Icons.Default.Warning, contentDescription = null) },
+            title = { Text("Attention") },
+            text = { Text(uiState.errorMessage) },
+            confirmButton = {
+                Button(onClick = { viewModel.deleteError() }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 

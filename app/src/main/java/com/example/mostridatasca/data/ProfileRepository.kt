@@ -40,25 +40,21 @@ class ProfileRepository(
         positionShare: Boolean
     ) {
         dataStore.data.collect {
-            try {
-                Log.d(
-                    "ProfileRepository",
-                    "updateUser: ${it[UID]}, $name, $picture, $positionShare"
-                )
-                MonstersApi.retrofitService.updateUser(
-                    it[UID]!!,
-                    it[SID]!!,
-                    name,
-                    picture,
-                    positionShare
-                )
-                userDao.updateName(it[UID]!!, name)
-                userDao.updatePicture(it[UID]!!, picture)
-                userDao.updatePositionShare(it[UID]!!, positionShare)
-                userDao.updateVersion(it[UID]!!)
-            } catch (e: Exception) {
-                Log.e("ProfileRepository", "updateUser: ${e.message}")
-            }
+            Log.d(
+                "ProfileRepository",
+                "updateUser: ${it[UID]}, $name, $picture, $positionShare"
+            )
+            MonstersApi.retrofitService.updateUser(
+                it[UID]!!,
+                it[SID]!!,
+                name,
+                picture,
+                positionShare
+            )
+            userDao.updateName(it[UID]!!, name)
+            userDao.updatePicture(it[UID]!!, picture)
+            userDao.updatePositionShare(it[UID]!!, positionShare)
+            userDao.updateVersion(it[UID]!!)
         }
     }
 

@@ -6,6 +6,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +34,7 @@ import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.MarkerState
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     viewModel: MapViewModel, modifier: Modifier = Modifier
@@ -35,15 +42,13 @@ fun MapScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     GoogleMap(
-        modifier = modifier,
-        properties = MapProperties(isMyLocationEnabled = true)
+        modifier = modifier, properties = MapProperties(isMyLocationEnabled = true)
     ) {
         uiState.objects.forEach { virtualObject ->
             MarkerInfoWindowContent(
                 state = MarkerState(
                     position = LatLng(virtualObject.lat, virtualObject.lon)
-                ),
-                icon = BitmapDescriptorFactory.fromResource(
+                ), icon = BitmapDescriptorFactory.fromResource(
                     when (virtualObject.type) {
                         "candy" -> R.drawable.candy
                         "weapon" -> R.drawable.weapon
@@ -86,13 +91,25 @@ fun MapScreen(
             }
         }
     }
+    if (uiState.errorMessage.isNotBlank()) {
+        AlertDialog(
+            onDismissRequest = { /* Do nothing */ },
+            icon = { Icon(Icons.Default.Warning, contentDescription = null) },
+            title = { Text("Attention") },
+            text = { Text(uiState.errorMessage) },
+            confirmButton = {
+                Button(onClick = { viewModel.deleteError() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }
 
 @Composable
 private fun MarkerTitle(title: String) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.bodyLarge
+        text = title, style = MaterialTheme.typography.bodyLarge
     )
 }
 
@@ -112,9 +129,7 @@ private fun MarkerImage(image: String) {
 fun MarkerInformation(left: String, right: String) {
     Row {
         Text(
-            text = left,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.weight(1f)
+            text = left, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f)
         )
         Text(
             text = right,

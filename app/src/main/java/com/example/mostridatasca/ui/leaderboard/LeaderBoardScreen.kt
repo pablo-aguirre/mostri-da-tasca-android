@@ -7,8 +7,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -60,6 +63,19 @@ fun LeaderBoardScreen(
                 }
             }
         }
+    }
+    if (uiState.errorMessage.isNotBlank()) {
+        AlertDialog(
+            onDismissRequest = { /* Do nothing */ },
+            icon = { Icon(Icons.Default.Warning, contentDescription = null) },
+            title = { Text("Attention") },
+            text = { Text(uiState.errorMessage) },
+            confirmButton = {
+                Button(onClick = { viewModel.deleteError() }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 

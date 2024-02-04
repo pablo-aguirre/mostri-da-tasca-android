@@ -17,6 +17,7 @@ import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -27,7 +28,8 @@ data class NearbyObjectUiState(
     val objects: List<VirtualObject> = emptyList(),
     val selectedObject: VirtualObject? = null,
     val latitude: Double = 0.0,
-    val longitude: Double = 0.0
+    val longitude: Double = 0.0,
+    val errorMessage: String = ""
 )
 
 class NearbyObjectsViewModel(
@@ -41,15 +43,27 @@ class NearbyObjectsViewModel(
 
     init {
         viewModelScope.launch {
-            objectsRepository.nearbyObjects.collect {
-                _uiState.value = _uiState.value.copy(objects = it)
-            }
+            objectsRepository.nearbyObjects
+                .catch {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Error getting nearby objects. Check your internet connection and restart the app"
+                    )
+                }
+                .collect {
+                    _uiState.value = _uiState.value.copy(objects = it)
+                }
         }
         viewModelScope.launch {
-            locationClient.getLocationUpdates(5000).collect {
-                _uiState.value =
-                    _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
-            }
+            locationClient.getLocationUpdates(5000)
+                .catch {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Error getting location. Check your internet connection and restart the app"
+                    )
+                }
+                .collect {
+                    _uiState.value =
+                        _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
+                }
         }
     }
 
@@ -84,16 +98,26 @@ class NearbyObjectsViewModel(
 
     fun activeObject() {
         viewModelScope.launch {
-            dataStore.data.collect {
-                val result = MonstersApi.retrofitService.activateObject(
-                    _uiState.value.selectedObject!!.id, it[SID]!!
-                )
-                Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                profileRepository.updateUserStatus(
-                    _uiState.value.selectedObject!!, result.life, result.experience
+            try {
+                dataStore.data.collect {
+                    val result = MonstersApi.retrofitService.activateObject(
+                        _uiState.value.selectedObject!!.id, it[SID]!!
+                    )
+                    Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
+                    profileRepository.updateUserStatus(
+                        _uiState.value.selectedObject!!, result.life, result.experience
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Error activating object. Check your internet connection and restart the app"
                 )
             }
         }
+    }
+
+    fun deleteError() {
+        _uiState.value = _uiState.value.copy(errorMessage = "")
     }
 
     companion object {

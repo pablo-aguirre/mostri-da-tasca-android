@@ -10,8 +10,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mostridatasca.MostriDaTascaApplication
 import com.example.mostridatasca.data.ProfileRepository
 import com.example.mostridatasca.model.VirtualObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +25,8 @@ data class ProfileUiState(
     val experience: String = "0",
     val artifacts: List<VirtualObject> = emptyList(),
     val newName: String = "",
-    val isNewNameValid: Boolean = false
+    val isNewNameValid: Boolean = false,
+    val errorMessage: String = ""
 )
 
 class ProfileViewModel(
@@ -37,7 +36,7 @@ class ProfileViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             profileRepository.profile.collect {
                 _uiState.value = _uiState.value.copy(
                     name = it.name,
@@ -66,22 +65,32 @@ class ProfileViewModel(
 
     fun updateName(newName: String) {
         viewModelScope.launch {
-            profileRepository.updateUser(
-                newName,
-                _uiState.value.picture,
-                _uiState.value.positionShare
-            )
+            try {
+                profileRepository.updateUser(
+                    newName,
+                    _uiState.value.picture,
+                    _uiState.value.positionShare
+                )
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value.copy(errorMessage = "Error updating name. Check your internet connection and restart the app.")
+            }
             _uiState.value = _uiState.value.copy(newName = "")
         }
     }
 
     fun updatePositionShare(newValue: Boolean) {
         viewModelScope.launch {
-            profileRepository.updateUser(
-                _uiState.value.name,
-                _uiState.value.picture,
-                newValue
-            )
+            try {
+                profileRepository.updateUser(
+                    _uiState.value.name,
+                    _uiState.value.picture,
+                    newValue
+                )
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value.copy(errorMessage = "Error updating position share. Check your internet connection and restart the app.")
+            }
         }
     }
 
@@ -97,12 +106,21 @@ class ProfileViewModel(
             imageBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.DEFAULT) }
 
         viewModelScope.launch {
-            profileRepository.updateUser(
-                _uiState.value.name,
-                imageString,
-                _uiState.value.positionShare
-            )
+            try {
+                profileRepository.updateUser(
+                    _uiState.value.name,
+                    imageString,
+                    _uiState.value.positionShare
+                )
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value.copy(errorMessage = "Error updating picture. Check your internet connection and restart the app.")
+            }
         }
+    }
+
+    fun deleteError() {
+        _uiState.value = _uiState.value.copy(errorMessage = "")
     }
 
     companion object {
