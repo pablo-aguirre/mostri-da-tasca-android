@@ -1,8 +1,9 @@
 package com.example.mostridatasca.ui.leaderboard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -10,7 +11,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,6 +29,7 @@ fun LeaderBoardScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
 
     if (uiState.selectedUser != null) {
         UserScreen(
@@ -37,9 +38,8 @@ fun LeaderBoardScreen(
             modifier = modifier
         )
     } else {
-        LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.surface)) {
-            items(uiState.users.size) { index ->
-                val user = uiState.users[index]
+        LazyColumn(state = listState, modifier = modifier) {
+            items(uiState.users) { user ->
                 UserListItem(
                     user = user,
                     selectUser = { viewModel.selectUser(it) }
