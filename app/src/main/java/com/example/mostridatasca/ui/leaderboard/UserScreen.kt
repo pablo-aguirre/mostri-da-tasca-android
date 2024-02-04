@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import com.example.mostridatasca.R
 import com.example.mostridatasca.model.User
 import com.example.mostridatasca.ui.ImageFromBase64
+import com.example.mostridatasca.ui.map.MapStyle
 import com.example.mostridatasca.ui.profile.UserInformation2
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -88,7 +90,8 @@ fun UserScreen(
                     .fillMaxWidth()
                     .height(300.dp),
                 properties = MapProperties(
-                    minZoomPreference = 12.0f
+                    minZoomPreference = 12.0f,
+                    mapStyleOptions = MapStyleOptions(MapStyle.json)
                 ),
                 cameraPositionState = CameraPositionState(
                     position = CameraPosition(LatLng(user.lat!!, user.lon!!), 0.0f, 0.0f, 0.0f)

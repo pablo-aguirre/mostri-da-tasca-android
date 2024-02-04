@@ -28,6 +28,7 @@ import com.example.mostridatasca.ui.ImageFromBase64
 import com.example.mostridatasca.ui.objects.defaultImage
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MarkerInfoWindowContent
@@ -42,7 +43,11 @@ fun MapScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     GoogleMap(
-        modifier = modifier, properties = MapProperties(isMyLocationEnabled = true)
+        modifier = modifier,
+        properties = MapProperties(
+            isMyLocationEnabled = true,
+            mapStyleOptions = MapStyleOptions(MapStyle.json)
+        )
     ) {
         uiState.objects.forEach { virtualObject ->
             MarkerInfoWindowContent(
