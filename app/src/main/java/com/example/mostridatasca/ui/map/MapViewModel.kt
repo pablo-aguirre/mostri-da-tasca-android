@@ -18,8 +18,6 @@ import com.example.mostridatasca.data.UsersRepository
 import com.example.mostridatasca.model.User
 import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -40,33 +38,29 @@ class MapViewModel(
 
     init {
         viewModelScope.launch {
-            try {
-                dataStore.edit { preferences ->
-                    if (preferences[SID] == null) {
-                        val session = MonstersApi.retrofitService.getSession()
-                        preferences[SID] = session.sid
-                        preferences[UID] = session.uid
-                        profileRepository.insertUser(
-                            MonstersApi.retrofitService.getUser(
-                                session.uid,
-                                session.sid
-                            )
+            dataStore.edit { preferences ->
+                if (preferences[SID] == null) {
+                    val session = MonstersApi.retrofitService.getSession()
+                    preferences[SID] = session.sid
+                    preferences[UID] = session.uid
+                    profileRepository.insertUser(
+                        MonstersApi.retrofitService.getUser(
+                            session.uid,
+                            session.sid
                         )
-                    }
+                    )
                 }
-                dataStore.data.collect {
-                    Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
-                }
-            } catch (e: Exception) {
-                Log.e("MapViewModel", "init: ${e.message}")
+            }
+            dataStore.data.collect {
+                Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             objectsRepository.nearbyObjects.collect {
                 _uiState.value = _uiState.value.copy(objects = it)
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             usersRepository.nearbyUsers.collect {
                 _uiState.value = _uiState.value.copy(users = it)
             }

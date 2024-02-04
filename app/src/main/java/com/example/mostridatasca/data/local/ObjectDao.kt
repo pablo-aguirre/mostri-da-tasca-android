@@ -13,7 +13,7 @@ interface ObjectDao {
     suspend fun insert(virtualObject: VirtualObject)
 
     @Query("SELECT * from objects WHERE id = :id")
-    fun getObject(id: Int): VirtualObject?
+    suspend fun getObject(id: Int): VirtualObject?
 
     @Query("SELECT * from objects")
     fun getAllObjects(): Flow<List<VirtualObject>>

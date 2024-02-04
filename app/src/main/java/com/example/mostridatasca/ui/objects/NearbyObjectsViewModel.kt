@@ -15,8 +15,6 @@ import com.example.mostridatasca.data.ProfileRepository
 import com.example.mostridatasca.location.LocationClient
 import com.example.mostridatasca.model.VirtualObject
 import com.example.mostridatasca.network.MonstersApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -42,20 +40,15 @@ class NearbyObjectsViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             objectsRepository.nearbyObjects.collect {
                 _uiState.value = _uiState.value.copy(objects = it)
-                Log.d("NearbyObjectsViewModel", "init, objects: ${_uiState.value.objects.size}")
             }
         }
         viewModelScope.launch {
             locationClient.getLocationUpdates(5000).collect {
                 _uiState.value =
                     _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
-                Log.d(
-                    "NearbyObjectsViewModel",
-                    "init, location: ${_uiState.value.latitude}, ${_uiState.value.longitude}"
-                )
             }
         }
     }
@@ -91,18 +84,14 @@ class NearbyObjectsViewModel(
 
     fun activeObject() {
         viewModelScope.launch {
-            try {
-                dataStore.data.collect {
-                    val result = MonstersApi.retrofitService.activateObject(
-                        _uiState.value.selectedObject!!.id, it[SID]!!
-                    )
-                    Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                    profileRepository.updateUserStatus(
-                        _uiState.value.selectedObject!!, result.life, result.experience
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("NearbyObjectsViewModel", "activeObject, error: $e")
+            dataStore.data.collect {
+                val result = MonstersApi.retrofitService.activateObject(
+                    _uiState.value.selectedObject!!.id, it[SID]!!
+                )
+                Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
+                profileRepository.updateUserStatus(
+                    _uiState.value.selectedObject!!, result.life, result.experience
+                )
             }
         }
     }
