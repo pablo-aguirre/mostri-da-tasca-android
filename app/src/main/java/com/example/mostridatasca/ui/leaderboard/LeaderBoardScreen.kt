@@ -1,5 +1,6 @@
 package com.example.mostridatasca.ui.leaderboard
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,10 +8,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,13 +42,22 @@ fun LeaderBoardScreen(
             modifier = modifier
         )
     } else {
-        LazyColumn(state = listState, modifier = modifier) {
-            items(uiState.users) { user ->
-                UserListItem(
-                    user = user,
-                    selectUser = { viewModel.selectUser(it) }
+        Scaffold(
+            modifier = modifier,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { viewModel.updateLeaderBoard() },
+                    content = {
+                        Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                    }
                 )
-                Divider()
+            }
+        ) {
+            LazyColumn(state = listState, modifier = Modifier.padding(it)) {
+                items(uiState.users) { user ->
+                    UserListItem(user = user, selectUser = { viewModel.selectUser(it) })
+                    Divider()
+                }
             }
         }
     }

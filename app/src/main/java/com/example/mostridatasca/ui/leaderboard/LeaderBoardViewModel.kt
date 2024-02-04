@@ -29,14 +29,20 @@ class LeaderBoardViewModel(
         viewModelScope.launch {
             usersRepository.leaderBoard.collect {
                 _uiState.value = _uiState.value.copy(users = it)
-                Log.d("LeaderBoardViewModel", "init, users: ${_uiState.value.users.size}")
             }
         }
+        updateLeaderBoard()
     }
 
     fun selectUser(user: User?) {
         Log.d("LeaderBoardViewModel", "selectUser: $user")
         _uiState.value = _uiState.value.copy(selectedUser = user)
+    }
+
+    fun updateLeaderBoard() {
+        viewModelScope.launch {
+            usersRepository.updateLeaderBoard()
+        }
     }
 
     companion object {

@@ -24,16 +24,14 @@ class ProfileRepository(
     }
 
     val profile: Flow<User> = userDao.getAllUsers().combine(dataStore.data) { users, preferences ->
-        val uid = preferences[UID] ?: 0
-        users.find { it.uid == uid } ?: User()
+        users.find { it.uid == preferences[UID] } ?: User()
     }
 
     val artifacts: Flow<List<VirtualObject>> =
         userDao.getAllUsers().combine(dataStore.data) { users, preferences ->
-            users.filter { it.uid == preferences[UID] }
-        }.combine(objectDao.getAllObjects()) { users, virtualObjects ->
-            val myUser = users[0]
-            virtualObjects.filter { it.id == myUser.weapon || it.id == myUser.amulet || it.id == myUser.armor }
+            users.find { it.uid == preferences[UID] }
+        }.combine(objectDao.getAllObjects()) { myUser, virtualObjects ->
+            virtualObjects.filter { it.id == myUser?.weapon || it.id == myUser?.amulet || it.id == myUser?.armor }
         }
 
     suspend fun updateUser(

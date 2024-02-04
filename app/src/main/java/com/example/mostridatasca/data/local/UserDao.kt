@@ -42,13 +42,13 @@ interface UserDao {
     suspend fun delete(user: User)
 
     @Query("SELECT * from users WHERE uid = :uid")
-    fun getUser(uid: Int): User?
+    suspend fun getUser(uid: Int): User?
 
     @Query("SELECT * from users")
     fun getAllUsers(): Flow<List<User>>
 
     @Query("DELETE FROM users")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("UPDATE users SET profileversion = profileversion + 1 WHERE uid = :uid")
     suspend fun updateVersion(uid: Int)
