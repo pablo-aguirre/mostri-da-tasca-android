@@ -27,13 +27,13 @@ interface UserDao {
     suspend fun updatePositionShare(uid: Int, positionshare: Boolean)
 
     @Query("UPDATE users SET weapon = :weapon WHERE uid = :uid")
-    suspend fun updateWeapon(uid: Int, weapon: Int)
+    suspend fun updateWeapon(uid: Int, weapon: Int?)
 
     @Query("UPDATE users SET armor = :armor WHERE uid = :uid")
-    suspend fun updateArmor(uid: Int, armor: Int)
+    suspend fun updateArmor(uid: Int, armor: Int?)
 
     @Query("UPDATE users SET amulet = :amulet WHERE uid = :uid")
-    suspend fun updateAmulet(uid: Int, amulet: Int)
+    suspend fun updateAmulet(uid: Int, amulet: Int?)
 
     @Query("UPDATE users SET life = :life, experience = :experience WHERE uid = :uid")
     suspend fun updateStatus(uid: Int, life: Int, experience: Int)

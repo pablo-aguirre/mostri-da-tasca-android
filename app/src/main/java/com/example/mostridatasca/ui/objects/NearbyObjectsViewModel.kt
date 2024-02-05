@@ -104,9 +104,13 @@ class NearbyObjectsViewModel(
                         _uiState.value.selectedObject!!.id, it[SID]!!
                     )
                     Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                    profileRepository.updateUserStatus(
-                        _uiState.value.selectedObject!!, result.life, result.experience
-                    )
+                    if (result.died) {
+                        profileRepository.resetUser()
+                    } else {
+                        profileRepository.updateUserStatus(
+                            _uiState.value.selectedObject!!, result.life, result.experience
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

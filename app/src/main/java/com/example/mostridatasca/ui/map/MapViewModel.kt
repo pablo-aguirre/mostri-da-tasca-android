@@ -146,9 +146,13 @@ class MapViewModel(
                             virtualObject.id, it[NearbyObjectsViewModel.SID]!!
                         )
                         Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                        profileRepository.updateUserStatus(
-                            virtualObject, result.life, result.experience
-                        )
+                        if (result.died) {
+                            profileRepository.resetUser()
+                        } else {
+                            profileRepository.updateUserStatus(
+                                virtualObject, result.life, result.experience
+                            )
+                        }
                     }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

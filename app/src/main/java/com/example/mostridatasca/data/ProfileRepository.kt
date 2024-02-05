@@ -58,6 +58,15 @@ class ProfileRepository(
         }
     }
 
+    suspend fun resetUser() {
+        dataStore.data.collect {
+            userDao.updateWeapon(it[UID]!!, null)
+            userDao.updateArmor(it[UID]!!, null)
+            userDao.updateAmulet(it[UID]!!, null)
+            userDao.updateStatus(it[UID]!!, 100, 0)
+        }
+    }
+
     suspend fun updateUserStatus(virtualObject: VirtualObject, life: Int, experience: Int) {
         dataStore.data.collect {
             when (virtualObject.type) {
