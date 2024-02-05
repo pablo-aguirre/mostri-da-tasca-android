@@ -12,23 +12,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 
 class UsersRepository(
-    private val dataStore: DataStore<Preferences>,
-    private val userDao: UserDao,
-    private val locationClient: LocationClient
+    private val dataStore: DataStore<Preferences>, private val userDao: UserDao, private val locationClient: LocationClient
 ) {
     private val currentLeaderBoard = MutableStateFlow<List<Int>>(emptyList())
-    val leaderBoard: Flow<List<User>> =
-        userDao.getAllUsers().combine(currentLeaderBoard) { users, ids ->
-            users.filter { user -> user.uid in ids }
-                .sortedBy { user -> user.experience }.reversed()
-        }
+    val leaderBoard: Flow<List<User>> = userDao.getAllUsers().combine(currentLeaderBoard) { users, ids ->
+        users.filter { user -> user.uid in ids }.sortedBy { user -> user.experience }.reversed()
+    }
 
     val nearbyUsers: Flow<List<User>> =
         locationClient.getLocationUpdates(5000).combine(dataStore.data) { location, preferences ->
             val nearbyUsers = MonstersApi.retrofitService.nearbyUsers(
-                preferences[SID]!!,
-                location.latitude,
-                location.longitude
+                preferences[SID]!!, location.latitude, location.longitude
             )
             nearbyUsers.forEach {
                 if (userDao.getUser(it.uid) == null) {

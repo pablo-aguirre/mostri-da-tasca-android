@@ -25,8 +25,7 @@ interface LocationClient {
 }
 
 class DefaultLocationClient(
-    private val context: Context,
-    private val client: FusedLocationProviderClient
+    private val context: Context, private val client: FusedLocationProviderClient
 ) : LocationClient {
 
     @SuppressLint("MissingPermission")
@@ -36,18 +35,14 @@ class DefaultLocationClient(
                 throw LocationClient.LocationException("Missing location permission")
             }
 
-            val locationManager =
-                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            val isNetworkEnabled =
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
             if (!isGpsEnabled && !isNetworkEnabled) {
                 throw LocationClient.LocationException("GPS is disabled")
             }
 
-            val request = LocationRequest.Builder(interval)
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .build()
+            val request = LocationRequest.Builder(interval).setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
             val locationCallback = object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult) {
@@ -59,9 +54,7 @@ class DefaultLocationClient(
             }
 
             client.requestLocationUpdates(
-                request,
-                locationCallback,
-                Looper.getMainLooper()
+                request, locationCallback, Looper.getMainLooper()
             )
 
             awaitClose {

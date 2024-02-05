@@ -16,9 +16,7 @@ import kotlinx.coroutines.launch
 
 
 data class LeaderBoardUiState(
-    val users: List<User> = emptyList(),
-    val selectedUser: User? = null,
-    val errorMessage: String = ""
+    val users: List<User> = emptyList(), val selectedUser: User? = null, val errorMessage: String = ""
 )
 
 class LeaderBoardViewModel(
@@ -29,13 +27,11 @@ class LeaderBoardViewModel(
 
     init {
         viewModelScope.launch {
-            usersRepository.leaderBoard
-                .catch {
+            usersRepository.leaderBoard.catch {
                     _uiState.value = _uiState.value.copy(
                         errorMessage = "Error getting leader board. Check your internet connection and restart the app"
                     )
-                }
-                .collect {
+                }.collect {
                     _uiState.value = _uiState.value.copy(users = it)
                 }
         }

@@ -41,9 +41,7 @@ import com.google.maps.android.compose.MarkerState
 
 @Composable
 fun UserScreen(
-    user: User?,
-    selectUser: (User?) -> Unit,
-    modifier: Modifier = Modifier
+    user: User?, selectUser: (User?) -> Unit, modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -53,14 +51,12 @@ fun UserScreen(
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             IconButton(
-                onClick = { selectUser(null) },
-                modifier = Modifier.align(Alignment.TopStart)
+                onClick = { selectUser(null) }, modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = null)
             }
             Column(
-                modifier = Modifier.align(Alignment.Center),
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier.align(Alignment.Center), verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = user?.name ?: "No user selected",
@@ -80,28 +76,23 @@ fun UserScreen(
         }
         Divider()
         UserInformation2(
-            lifePoints = user?.life.toString(),
-            experience = user?.experience.toString()
+            lifePoints = user?.life.toString(), experience = user?.experience.toString()
         )
         Divider()
         if (user?.positionshare!!) {
             GoogleMap(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp),
-                properties = MapProperties(
-                    minZoomPreference = 12.0f,
-                    mapStyleOptions = MapStyleOptions(MapStyle.jsonBlue)
-                ),
-                cameraPositionState = CameraPositionState(
+                    .height(300.dp), properties = MapProperties(
+                    minZoomPreference = 12.0f, mapStyleOptions = MapStyleOptions(MapStyle.jsonBlue)
+                ), cameraPositionState = CameraPositionState(
                     position = CameraPosition(LatLng(user.lat!!, user.lon!!), 0.0f, 0.0f, 0.0f)
                 )
             ) {
                 Marker(
                     state = MarkerState(
                         position = LatLng(user.lat, user.lon)
-                    ),
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.player)
+                    ), icon = BitmapDescriptorFactory.fromResource(R.drawable.player)
                 )
             }
         }

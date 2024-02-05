@@ -32,30 +32,21 @@ import com.example.mostridatasca.ui.ImageFromBase64
 
 @Composable
 fun LeaderBoardScreen(
-    viewModel: LeaderBoardViewModel,
-    modifier: Modifier = Modifier
+    viewModel: LeaderBoardViewModel, modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
     if (uiState.selectedUser != null) {
         UserScreen(
-            user = uiState.selectedUser,
-            selectUser = { viewModel.selectUser(it) },
-            modifier = modifier
+            user = uiState.selectedUser, selectUser = { viewModel.selectUser(it) }, modifier = modifier
         )
     } else {
-        Scaffold(
-            modifier = modifier,
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { viewModel.updateLeaderBoard() },
-                    content = {
-                        Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
-                    }
-                )
-            }
-        ) {
+        Scaffold(modifier = modifier, floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.updateLeaderBoard() }, content = {
+                Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+            })
+        }) {
             LazyColumn(state = listState, modifier = Modifier.padding(it)) {
                 items(uiState.users) { user ->
                     UserListItem(user = user, selectUser = { viewModel.selectUser(it) })
@@ -65,8 +56,7 @@ fun LeaderBoardScreen(
         }
     }
     if (uiState.errorMessage.isNotBlank()) {
-        AlertDialog(
-            onDismissRequest = { /* Do nothing */ },
+        AlertDialog(onDismissRequest = { /* Do nothing */ },
             icon = { Icon(Icons.Default.Warning, contentDescription = null) },
             title = { Text("Attention") },
             text = { Text(uiState.errorMessage) },
@@ -74,33 +64,25 @@ fun LeaderBoardScreen(
                 Button(onClick = { viewModel.deleteError() }) {
                     Text("OK")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun UserListItem(
-    user: User,
-    selectUser: (User) -> Unit
+    user: User, selectUser: (User) -> Unit
 ) {
-    ListItem(
-        leadingContent = {
-            ImageFromBase64(
-                image = user.picture
-                    ?: stringResource(id = com.example.mostridatasca.R.string.default_user_image),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-            )
-        },
-        headlineContent = { Text(user.name) },
-        supportingContent = { Text("${user.experience} XP") },
-        trailingContent = {
-            IconButton(onClick = { selectUser(user) }) {
-                Icon(Icons.Outlined.Info, contentDescription = null)
-            }
+    ListItem(leadingContent = {
+        ImageFromBase64(
+            image = user.picture ?: stringResource(id = com.example.mostridatasca.R.string.default_user_image),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)
+        )
+    }, headlineContent = { Text(user.name) }, supportingContent = { Text("${user.experience} XP") }, trailingContent = {
+        IconButton(onClick = { selectUser(user) }) {
+            Icon(Icons.Outlined.Info, contentDescription = null)
         }
-    )
+    })
 }
