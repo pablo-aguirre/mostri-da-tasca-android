@@ -73,7 +73,7 @@ class ProfileViewModel(
                 )
             } catch (e: Exception) {
                 _uiState.value =
-                    _uiState.value.copy(errorMessage = "Error updating name. Check your internet connection and restart the app.")
+                    _uiState.value.copy(errorMessage = "Error updating name. Check your internet connection and retry.")
             }
             _uiState.value = _uiState.value.copy(newName = "")
         }
@@ -89,7 +89,7 @@ class ProfileViewModel(
                 )
             } catch (e: Exception) {
                 _uiState.value =
-                    _uiState.value.copy(errorMessage = "Error updating position share. Check your internet connection and restart the app.")
+                    _uiState.value.copy(errorMessage = "Error updating position share. Check your internet connection and retry.")
             }
         }
     }
@@ -114,7 +114,7 @@ class ProfileViewModel(
                 )
             } catch (e: Exception) {
                 _uiState.value =
-                    _uiState.value.copy(errorMessage = "Error updating picture. Check your internet connection and restart the app.")
+                    _uiState.value.copy(errorMessage = "Error updating image.")
             }
         }
     }

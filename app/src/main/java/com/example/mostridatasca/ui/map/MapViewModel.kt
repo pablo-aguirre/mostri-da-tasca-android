@@ -55,60 +55,51 @@ class MapViewModel(
                         MonstersApi.retrofitService.getSession()
                     } catch (e: Exception) {
                         _uiState.value =
-                            _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app")
+                            _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app.")
                         return@edit
                     }
                     preferences[SID] = session.sid
                     preferences[UID] = session.uid
                     profileRepository.insertUser(
                         MonstersApi.retrofitService.getUser(
-                            session.uid,
-                            session.sid
+                            session.uid, session.sid
                         )
                     )
                 }
             }
-            dataStore.data
-                .catch {
-                    _uiState.value =
-                        _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app")
-                }.collect {
-                    Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
-                }
+            dataStore.data.catch {
+                _uiState.value =
+                    _uiState.value.copy(errorMessage = "Error getting session. Check your internet connection and restart the app.")
+            }.collect {
+                Log.d("MapViewModel", "init, sid: ${it[SID]}, uid: ${it[UID]}")
+            }
         }
         viewModelScope.launch {
-            objectsRepository.nearbyObjects
-                .catch {
-                    _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting nearby objects. Check your internet connection and restart the app"
-                    )
-                }
-                .collect {
-                    _uiState.value = _uiState.value.copy(objects = it)
-                }
+            objectsRepository.nearbyObjects.catch {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Error getting nearby objects. Check your internet connection and retry."
+                )
+            }.collect {
+                _uiState.value = _uiState.value.copy(objects = it)
+            }
         }
         viewModelScope.launch {
-            usersRepository.nearbyUsers
-                .catch {
-                    _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting nearby users. Check your internet connection and restart the app"
-                    )
-                }
-                .collect {
-                    _uiState.value = _uiState.value.copy(users = it)
-                }
+            usersRepository.nearbyUsers.catch {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Error getting nearby users. Check your internet connection and retry."
+                )
+            }.collect {
+                _uiState.value = _uiState.value.copy(users = it)
+            }
         }
         viewModelScope.launch {
-            locationClient.getLocationUpdates(5000)
-                .catch {
-                    _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting location. Check your internet connection and restart the app"
-                    )
-                }
-                .collect {
-                    _uiState.value =
-                        _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
-                }
+            locationClient.getLocationUpdates(5000).catch {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Error getting location. Check your internet connection and retry."
+                )
+            }.collect {
+                _uiState.value = _uiState.value.copy(latitude = it.latitude, longitude = it.longitude)
+            }
         }
     }
 
@@ -127,10 +118,9 @@ class MapViewModel(
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
 
-        val a =
-            sin(dLat / 2) * sin(dLat / 2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(
-                dLon / 2
-            ) * sin(dLon / 2)
+        val a = sin(dLat / 2) * sin(dLat / 2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(
+            dLon / 2
+        ) * sin(dLon / 2)
 
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
@@ -140,23 +130,22 @@ class MapViewModel(
     fun activeObject(virtualObject: VirtualObject) {
         viewModelScope.launch {
             try {
-                dataStore.data
-                    .collect {
-                        val result = MonstersApi.retrofitService.activateObject(
-                            virtualObject.id, it[NearbyObjectsViewModel.SID]!!
+                dataStore.data.collect {
+                    val result = MonstersApi.retrofitService.activateObject(
+                        virtualObject.id, it[NearbyObjectsViewModel.SID]!!
+                    )
+                    Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
+                    if (result.died) {
+                        profileRepository.resetUser()
+                    } else {
+                        profileRepository.updateUserStatus(
+                            virtualObject, result.life, result.experience
                         )
-                        Log.d("NearbyObjectsViewModel", "activeObject, result: $result")
-                        if (result.died) {
-                            profileRepository.resetUser()
-                        } else {
-                            profileRepository.updateUserStatus(
-                                virtualObject, result.life, result.experience
-                            )
-                        }
                     }
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Error activating object. Check your internet connection and restart the app"
+                    errorMessage = "Error activating object. Check your internet connection and retry."
                 )
             }
         }

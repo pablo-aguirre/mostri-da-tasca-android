@@ -46,7 +46,7 @@ class NearbyObjectsViewModel(
             objectsRepository.nearbyObjects
                 .catch {
                     _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting nearby objects. Check your internet connection and restart the app"
+                        errorMessage = "Error getting nearby objects. Check your internet connection and retry."
                     )
                 }
                 .collect {
@@ -57,7 +57,7 @@ class NearbyObjectsViewModel(
             locationClient.getLocationUpdates(5000)
                 .catch {
                     _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting location. Check your internet connection and restart the app"
+                        errorMessage = "Error getting location. Check your internet connection and retry."
                     )
                 }
                 .collect {
@@ -114,7 +114,7 @@ class NearbyObjectsViewModel(
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Error activating object. Check your internet connection and restart the app"
+                    errorMessage = "Error activating object. Check your internet connection and retry."
                 )
             }
         }

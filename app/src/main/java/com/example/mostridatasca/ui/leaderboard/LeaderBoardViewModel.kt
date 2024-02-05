@@ -29,7 +29,7 @@ class LeaderBoardViewModel(
         viewModelScope.launch {
             usersRepository.leaderBoard.catch {
                     _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error getting leader board. Check your internet connection and restart the app"
+                        errorMessage = "Error getting leader board. Check your internet connection and retry."
                     )
                 }.collect {
                     _uiState.value = _uiState.value.copy(users = it)
@@ -49,7 +49,7 @@ class LeaderBoardViewModel(
                 usersRepository.updateLeaderBoard()
             } catch (e: Exception) {
                 _uiState.value =
-                    _uiState.value.copy(errorMessage = "Error updating leader board. Check your internet connection and restart the app")
+                    _uiState.value.copy(errorMessage = "Error updating leader board. Check your internet connection and retry.")
             }
         }
     }
