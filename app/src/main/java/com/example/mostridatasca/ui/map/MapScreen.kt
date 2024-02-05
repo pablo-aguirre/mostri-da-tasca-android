@@ -10,7 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,7 +35,6 @@ import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.MarkerState
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     viewModel: MapViewModel, modifier: Modifier = Modifier
@@ -51,6 +50,11 @@ fun MapScreen(
     ) {
         uiState.objects.forEach { virtualObject ->
             MarkerInfoWindowContent(
+                onInfoWindowLongClick = {
+                    if (viewModel.isNear(virtualObject))
+                        viewModel.activeObject(virtualObject)
+                    it.hideInfoWindow()
+                },
                 state = MarkerState(
                     position = LatLng(virtualObject.lat, virtualObject.lon)
                 ), icon = BitmapDescriptorFactory.fromResource(
@@ -73,6 +77,12 @@ fun MapScreen(
                     MarkerImage(virtualObject.image ?: defaultImage(virtualObject.type))
                     MarkerInformation(left = "Type:", right = virtualObject.type)
                     MarkerInformation(left = "Level:", right = virtualObject.level.toString())
+                    Divider()
+                    if (viewModel.isNear(virtualObject)) {
+                        Text("Long press for activate.")
+                    } else {
+                        Text("Too far away.")
+                    }
                 }
             }
         }
