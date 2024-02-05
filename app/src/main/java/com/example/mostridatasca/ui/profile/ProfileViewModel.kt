@@ -75,8 +75,8 @@ class ProfileViewModel(
                 _uiState.value =
                     _uiState.value.copy(errorMessage = "Error updating name. Check your internet connection and retry.")
             }
-            _uiState.value = _uiState.value.copy(newName = "")
         }
+        _uiState.update { it.copy(newName = "", isNewNameValid = false) }
     }
 
     fun updatePositionShare(newValue: Boolean) {
