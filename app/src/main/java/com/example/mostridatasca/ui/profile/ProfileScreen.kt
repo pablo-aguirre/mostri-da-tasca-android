@@ -32,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,46 +55,47 @@ fun ProfileScreen(
     context: Context
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = { /* TODO */ }
     ) {
-        Text(
-            text = uiState.name,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(10.dp)
-        )
-        ProfileImage(
-            image = uiState.picture ?: stringResource(id = R.string.default_user_image),
-            updatePicture = { viewModel.updatePicture(context.contentResolver, it) }
-        )
-        UserInformation1(
-            newName = uiState.newName,
-            positionShare = uiState.positionShare,
-            buttonEnabled = uiState.isNewNameValid,
-            setNewName = { viewModel.setNewName(it) },
-            updateName = { viewModel.updateName(it) },
-            updatePositionShare = { viewModel.updatePositionShare(it) }
-        )
-        Divider()
-        UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
-        Divider()
-        Text(
-            text = if (uiState.artifacts.isEmpty()) "No artifacts" else "Your Artifacts",
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(10.dp)
-        )
-        LazyRow {
-            items(uiState.artifacts) { artifact ->
-                SingleArtifact(
-                    name = artifact.name,
-                    image = artifact.image ?: defaultImage(type = artifact.type),
-                    type = artifact.type,
-                    level = artifact.level.toString()
-                )
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = uiState.name, style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(10.dp)
+            )
+            ProfileImage(image = uiState.picture ?: stringResource(id = R.string.default_user_image),
+                updatePicture = { viewModel.updatePicture(context.contentResolver, it) })
+            UserInformation1(newName = uiState.newName,
+                positionShare = uiState.positionShare,
+                buttonEnabled = uiState.isNewNameValid,
+                setNewName = { viewModel.setNewName(it) },
+                updateName = { viewModel.updateName(it) },
+                updatePositionShare = { viewModel.updatePositionShare(it) })
+            Divider()
+            UserInformation2(lifePoints = uiState.life, experience = uiState.experience)
+            Divider()
+            Text(
+                text = if (uiState.artifacts.isEmpty()) "No artifacts" else "Your Artifacts",
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.padding(10.dp)
+            )
+            LazyRow {
+                items(uiState.artifacts) { artifact ->
+                    SingleArtifact(
+                        name = artifact.name,
+                        image = artifact.image ?: defaultImage(type = artifact.type),
+                        type = artifact.type,
+                        level = artifact.level.toString()
+                    )
+                }
             }
+            Divider()
         }
     }
     if (uiState.errorMessage.isNotBlank()) {
